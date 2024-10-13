@@ -15,7 +15,7 @@ class WeatherAPIBase(ABC):
         pass
 
     @abstractmethod
-    def get_forecast(self, day: int, hour: int) -> dict:
+    def get_forecast(self, day: int, hour: int) -> dict | None:
         pass
     
     @abstractmethod

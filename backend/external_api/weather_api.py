@@ -12,6 +12,7 @@ class WeatherAPI(WeatherAPIBase):
 
         if response.status_code == 200:
             self.data = response.json() 
+            
             return True
         
         return False
@@ -19,8 +20,12 @@ class WeatherAPI(WeatherAPIBase):
     def get_current(self) -> dict:
         return self.parse_same_part_of_data(self.data["current"])
 
-    def get_forecast(self, day: int, hour: int) -> dict:
-        pass
+    def get_forecast(self, day: int, hour: int) -> dict | None:
+        for day_info in self.data["forecast"]["forecastday"]:
+            if int(day_info["date"].split("-")[2]) == day:
+                for hour_info in day_info["hour"]:
+                    if int(hour_info["time"].split()[1].split(":")[0]) == hour:
+                        return self.parse_same_part_of_data(hour_info)
 
     def parse_same_part_of_data(self, part: dict) -> dict:
         result = {}
