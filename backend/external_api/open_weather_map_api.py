@@ -34,9 +34,9 @@ class OpenWeatherMapAPI(WeatherAPIBase):
         return False
 
     def get_current(self) -> dict:
-        return self.parse_same_part_of_data(self.data["current"])
+        return self.parse_info(self.data["current"])
 
-    def get_forecast(self, day: int, hour: int) -> dict | None:
+    def get_hour_forecast(self, day: int, hour: int) -> dict | None:
         hour_infos = []  
         hours = []
 
@@ -48,7 +48,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
                 hours.append(int(current_hour))
                 
                 if int(current_hour) == hour:
-                    return self.parse_same_part_of_data(hour_info)
+                    return self.parse_info(hour_info)
 
         if hours:
             closest_hour = get_closest_num(hours, hour)
@@ -58,14 +58,17 @@ class OpenWeatherMapAPI(WeatherAPIBase):
 
             for hour_info in hour_infos:
                 if int(hour_info["dt_txt"].split()[1].split(":")[0]) == closest_hour:
-                    return self.parse_same_part_of_data(hour_info)
+                    return self.parse_info(hour_info)
 
-    def parse_same_part_of_data(self, part: dict) -> dict:
+    def get_day_forecast(self, day: int) -> dict | None:
+        pass
+
+    def parse_info(self, info: dict) -> dict:
         result = {}
-        result[rke.TEMPERATURE_C] = part["main"]["temp"]
-        result[rke.WIND_KM] = part["wind"]["speed"]
-        result[rke.PRESSURE_MB] = part["main"]["pressure"]
-        result[rke.HUMIDITY] = part["main"]["humidity"]
-        result[rke.CONDITION] = part["weather"][0]["main"]
+        result[rke.TEMPERATURE_C] = info["main"]["temp"]
+        result[rke.WIND_KM] = info["wind"]["speed"]
+        result[rke.PRESSURE_MB] = info["main"]["pressure"]
+        result[rke.HUMIDITY] = info["main"]["humidity"]
+        result[rke.CONDITION] = info["weather"][0]["main"]
 
         return result   

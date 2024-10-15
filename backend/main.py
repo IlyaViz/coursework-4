@@ -21,7 +21,7 @@ def get_current(region: str):
 def get_forecast(region: str, day: int, hour: int):
     weather_aggregator = CachedWeatherAggregator.get_weather_aggregator(weather_API_classes, region)
 
-    return weather_aggregator.get_aggregated_forecast(day, hour)
+    return weather_aggregator.get_aggregated_hour_forecast(day, hour)
 
 
 

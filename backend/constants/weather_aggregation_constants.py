@@ -1,2 +1,2 @@
-MAX_DAYS = 5
+MAX_DAYS = 1
 CACHE_TIME = 5 * 60

@@ -6,7 +6,7 @@ class CachedRegionLatLonConverter():
     cache = {}
     
     @classmethod
-    def convert(cls, region: str) -> tuple[int, int] | None:
+    def convert(cls, region: str) -> tuple | None:
         if cls.cache.get(region, 0) != 0:
             return cls.cache[region]
 

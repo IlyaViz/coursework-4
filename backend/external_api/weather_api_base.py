@@ -15,10 +15,14 @@ class WeatherAPIBase(ABC):
         pass
 
     @abstractmethod
-    def get_forecast(self, day: int, hour: int) -> dict | None:
+    def get_hour_forecast(self, day: int, hour: int) -> dict | None:
+        pass
+
+    @abstractmethod
+    def get_day_forecast(self, day: int) -> dict | None:
         pass
     
     @abstractmethod
-    def parse_same_part_of_data(self, part: dict) -> dict:
+    def parse_info(self, info: dict) -> dict:
         pass
 

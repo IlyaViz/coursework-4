@@ -1,3 +1,4 @@
+import math
 from ..external_api.weather_api_base import WeatherAPIBase
 from ..enums.result_key_enum import ResultKeyEnum as rke
 
@@ -13,15 +14,38 @@ class WeatherAggregator():
                 self.weather_APIs.append(weather_API)
 
     def get_aggregated_current(self) -> dict:
-        current_data = [weather_API.get_current() for weather_API in self.weather_APIs]
+        current_data = [weather_API.get_current() for weather_API in self.weather_APIs if weather_API.get_current() is not None]
 
-        result = {num: data for num, data in enumerate(current_data)}
+        return self.aggregate_data(current_data)
+
+    def get_aggregated_hour_forecast(self, day: int, hour: int) -> dict:
+        forecast_data = [weather_API.get_hour_forecast(day, hour) for weather_API in self.weather_APIs if weather_API.get_hour_forecast(day, hour) is not None]
+
+        if not forecast_data:
+            return {}
+
+        return self.aggregate_data(forecast_data)
+
+    def get_aggregated_day_forecast(self, day: int, hour: int) -> dict:
+        pass    
+
+    def aggregate_data(self, data: dict) -> dict:
+        result = {}
+        result[rke.TEMPERATURE_C] = self.get_mean_with_chance([d[rke.TEMPERATURE_C] for d in data])
+        result[rke.WIND_KM] = self.get_mean_with_chance([d[rke.WIND_KM] for d in data])
+        result[rke.PRESSURE_MB] = self.get_mean_with_chance([d[rke.PRESSURE_MB] for d in data])
+        result[rke.HUMIDITY] = self.get_mean_with_chance([d[rke.HUMIDITY] for d in data])
+        result[rke.CONDITION] = [d[rke.CONDITION] for d in data]
+        
+        result["resources"] = len(data)
 
         return result
 
-    def get_aggregated_forecast(self, day: int, hour: int) -> dict:
-        forecast_data = [weather_API.get_forecast(day, hour) for weather_API in self.weather_APIs]
+    def get_mean_with_chance(self, values: list[float]) -> tuple:
+        #CHAT GPT formula
+        mean = sum(values) / len(values)
+        variance = sum((value - mean) ** 2 for value in values) / len(values)
+        stddev = math.sqrt(variance)
+        chance = max(0, min(100, (1 - stddev / max(abs(mean), 1)) * 100)) 
 
-        result = {num: data for num, data in enumerate(forecast_data)}
-
-        return result
+        return (round(mean, 1), int(chance))
