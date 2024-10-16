@@ -1,6 +1,6 @@
 import math
 from ..external_api.weather_api_base import WeatherAPIBase
-from ..enums.result_key_enum import ResultKeyEnum as rke
+from ..enums.result_key_enum import CurrentAndHourResultKeyEnum as cahrke
 
 
 class WeatherAggregator():
@@ -31,11 +31,11 @@ class WeatherAggregator():
             return None
 
         result = {}
-        result[rke.TEMPERATURE_C] = self.get_mean_with_chance([d[rke.TEMPERATURE_C] for d in data])
-        result[rke.WIND_KM] = self.get_mean_with_chance([d[rke.WIND_KM] for d in data])
-        result[rke.PRESSURE_MB] = self.get_mean_with_chance([d[rke.PRESSURE_MB] for d in data])
-        result[rke.HUMIDITY] = self.get_mean_with_chance([d[rke.HUMIDITY] for d in data])
-        result[rke.CONDITION] = [d[rke.CONDITION] for d in data]
+        result[cahrke.TEMPERATURE_C] = self.get_mean_with_chance([d[cahrke.TEMPERATURE_C] for d in data])
+        result[cahrke.WIND_KM] = self.get_mean_with_chance([d[cahrke.WIND_KM] for d in data])
+        result[cahrke.PRESSURE_MB] = self.get_mean_with_chance([d[cahrke.PRESSURE_MB] for d in data])
+        result[cahrke.HUMIDITY] = self.get_mean_with_chance([d[cahrke.HUMIDITY] for d in data])
+        result[cahrke.CONDITION] = [d[cahrke.CONDITION] for d in data]
         
         result["resources"] = len(data)
 

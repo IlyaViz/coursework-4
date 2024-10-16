@@ -1,7 +1,7 @@
 import os
 import requests
 from .weather_api_base import WeatherAPIBase
-from ..enums.result_key_enum import ResultKeyEnum as rke
+from ..enums.result_key_enum import CurrentAndHourResultKeyEnum as cahrke
 
 
 class WeatherAPI(WeatherAPIBase):
@@ -32,10 +32,10 @@ class WeatherAPI(WeatherAPIBase):
 
     def parse_info(self, info: dict) -> dict:
         result = {}
-        result[rke.TEMPERATURE_C] = info["temp_c"]
-        result[rke.WIND_KM] = info["wind_kph"]
-        result[rke.PRESSURE_MB] = info["pressure_mb"]
-        result[rke.HUMIDITY] = info["humidity"]
-        result[rke.CONDITION] = info["condition"]["text"]
+        result[cahrke.TEMPERATURE_C] = info["temp_c"]
+        result[cahrke.WIND_KM] = info["wind_kph"]
+        result[cahrke.PRESSURE_MB] = info["pressure_mb"]
+        result[cahrke.HUMIDITY] = info["humidity"]
+        result[cahrke.CONDITION] = info["condition"]["text"]
 
         return result
