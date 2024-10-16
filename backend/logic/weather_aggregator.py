@@ -13,23 +13,23 @@ class WeatherAggregator():
             if weather_API.update_data(days):
                 self.weather_APIs.append(weather_API)
 
-    def get_aggregated_current(self) -> dict:
-        current_data = [weather_API.get_current() for weather_API in self.weather_APIs if weather_API.get_current() is not None]
+    def get_aggregated_current(self) -> dict | None:
+        current_data = [weather_API.get_current() for weather_API in self.weather_APIs]
 
         return self.aggregate_data(current_data)
 
-    def get_aggregated_hour_forecast(self, day: int, hour: int) -> dict:
+    def get_aggregated_hour_forecast(self, day: int, hour: int) -> dict | None:
         forecast_data = [weather_API.get_hour_forecast(day, hour) for weather_API in self.weather_APIs if weather_API.get_hour_forecast(day, hour) is not None]
-
-        if not forecast_data:
-            return {}
 
         return self.aggregate_data(forecast_data)
 
-    def get_aggregated_day_forecast(self, day: int, hour: int) -> dict:
+    def get_aggregated_day_forecast(self, day: int, hour: int) -> dict | None:
         pass    
 
-    def aggregate_data(self, data: dict) -> dict:
+    def aggregate_data(self, data: list) -> dict | None:
+        if not data:
+            return None
+
         result = {}
         result[rke.TEMPERATURE_C] = self.get_mean_with_chance([d[rke.TEMPERATURE_C] for d in data])
         result[rke.WIND_KM] = self.get_mean_with_chance([d[rke.WIND_KM] for d in data])
@@ -41,7 +41,7 @@ class WeatherAggregator():
 
         return result
 
-    def get_mean_with_chance(self, values: list[float]) -> tuple:
+    def get_mean_with_chance(self, values: list) -> tuple:
         #CHAT GPT formula
         mean = sum(values) / len(values)
         variance = sum((value - mean) ** 2 for value in values) / len(values)
