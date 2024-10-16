@@ -1,6 +1,6 @@
 import math
 from ..external_api.weather_api_base import WeatherAPIBase
-from ..enums.result_key_enum import CurrentAndHourResultKeyEnum as cahrke
+from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 
 
 class WeatherAggregator():
@@ -19,11 +19,11 @@ class WeatherAggregator():
         return self.aggregate_data(current_data)
 
     def get_aggregated_hour_forecast(self, day: int, hour: int) -> dict | None:
-        forecast_data = [weather_API.get_hour_forecast(day, hour) for weather_API in self.weather_APIs if weather_API.get_hour_forecast(day, hour) is not None]
+        hour_forecast_data = [weather_API.get_hour_forecast(day, hour) for weather_API in self.weather_APIs if weather_API.get_hour_forecast(day, hour) is not None]
 
-        return self.aggregate_data(forecast_data)
+        return self.aggregate_data(hour_forecast_data)
 
-    def get_aggregated_day_forecast(self, day: int, hour: int) -> dict | None:
+    def get_aggregated_day_forecast(self, day: int) -> dict | None:
         pass    
 
     def aggregate_data(self, data: list) -> dict | None:
@@ -31,21 +31,26 @@ class WeatherAggregator():
             return None
 
         result = {}
-        result[cahrke.TEMPERATURE_C] = self.get_mean_with_chance([d[cahrke.TEMPERATURE_C] for d in data])
-        result[cahrke.WIND_KM] = self.get_mean_with_chance([d[cahrke.WIND_KM] for d in data])
-        result[cahrke.PRESSURE_MB] = self.get_mean_with_chance([d[cahrke.PRESSURE_MB] for d in data])
-        result[cahrke.HUMIDITY] = self.get_mean_with_chance([d[cahrke.HUMIDITY] for d in data])
-        result[cahrke.CONDITION] = [d[cahrke.CONDITION] for d in data]
+        keys = data[0].keys()
+
+        for key in keys:
+            values = []
+
+            for d in data:
+                values.append(d[key])
+            
+            if key != hrke.CONDITION:
+                result[key] = self.get_min_max_mean(values)
+            else:
+                result[key] = values
         
         result["resources"] = len(data)
 
         return result
 
-    def get_mean_with_chance(self, values: list) -> tuple:
-        #CHAT GPT formula
+    def get_min_max_mean(self, values: list) -> dict:
+        min_value = min(values)
+        max_value = max(values)
         mean = sum(values) / len(values)
-        variance = sum((value - mean) ** 2 for value in values) / len(values)
-        stddev = math.sqrt(variance)
-        chance = max(0, min(100, (1 - stddev / max(abs(mean), 1)) * 100)) 
 
-        return (round(mean, 1), int(chance))
+        return {"min": min_value, "max": max_value, "mean": mean}

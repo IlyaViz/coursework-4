@@ -1,6 +1,6 @@
 import os
 import requests
-from ..enums.result_key_enum import CurrentAndHourResultKeyEnum as cahrke
+from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from .cached_region_lat_lon_converter import CachedRegionLatLonConverter
 from .weather_api_base import WeatherAPIBase
 from ..utils.get_closest_number import get_closest_num
@@ -65,10 +65,10 @@ class OpenWeatherMapAPI(WeatherAPIBase):
 
     def parse_info(self, info: dict) -> dict:
         result = {}
-        result[cahrke.TEMPERATURE_C] = info["main"]["temp"]
-        result[cahrke.WIND_KM] = info["wind"]["speed"]
-        result[cahrke.PRESSURE_MB] = info["main"]["pressure"]
-        result[cahrke.HUMIDITY] = info["main"]["humidity"]
-        result[cahrke.CONDITION] = info["weather"][0]["main"]
+        result[hrke.TEMPERATURE_C] = info["main"]["temp"]
+        result[hrke.WIND_KM] = info["wind"]["speed"]
+        result[hrke.PRESSURE_MB] = info["main"]["pressure"]
+        result[hrke.HUMIDITY] = info["main"]["humidity"]
+        result[hrke.CONDITION] = info["weather"][0]["main"]
 
         return result   

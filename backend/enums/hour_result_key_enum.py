@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CurrentAndHourResultKeyEnum(Enum):
+class HourResultKeyEnum(Enum):
     TEMPERATURE_C = "temperature"
     PRESSURE_MB = "pressure"
     HUMIDITY = "humidity"
