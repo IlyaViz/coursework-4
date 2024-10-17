@@ -1,6 +1,6 @@
 import math
 from ..external_api.weather_api_base import WeatherAPIBase
-from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
+from ..enums.result_key_enum import ResultKeyEnum as rke
 
 
 class WeatherAggregator():
@@ -39,7 +39,7 @@ class WeatherAggregator():
             for d in data:
                 values.append(d[key])
             
-            if key != hrke.CONDITION:
+            if key != rke.CONDITION:
                 result[key] = self.get_min_max_mean(values)
             else:
                 result[key] = values
