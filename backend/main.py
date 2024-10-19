@@ -17,12 +17,16 @@ def get_current(region: str):
 
     return weather_aggregator.get_aggregated_current()
 
-@app.get("/forecast/")
-def get_forecast(region: str, day: int, hour: int):
+@app.get("/forecast/hour")
+def get_hour_forecast(region: str, day: int, hour: int):
     weather_aggregator = CachedWeatherAggregator.get_weather_aggregator(weather_API_classes, region)
 
     return weather_aggregator.get_aggregated_hour_forecast(day, hour)
 
+@app.get("/forecast/day")
+def get_day_forecast(region: str, day: int):
+    weather_aggregator = CachedWeatherAggregator.get_weather_aggregator(weather_API_classes, region)
 
+    return weather_aggregator.get_aggregated_day_forecast(day)
 
 

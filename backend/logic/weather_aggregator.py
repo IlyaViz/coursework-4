@@ -1,10 +1,10 @@
-import math
+import statistics
 from ..external_api.weather_api_base import WeatherAPIBase
-from ..enums.result_key_enum import ResultKeyEnum as rke
+from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 
 
 class WeatherAggregator():
-    def __init__(self, weather_API_classes: tuple[WeatherAPIBase], region: str, days: int) -> None:
+    def __init__(self, weather_API_classes: tuple, region: str, days: int) -> None:
         self.weather_APIs = []
 
         for weather_API_class in weather_API_classes:
@@ -24,33 +24,34 @@ class WeatherAggregator():
         return self.aggregate_data(hour_forecast_data)
 
     def get_aggregated_day_forecast(self, day: int) -> dict | None:
-        pass    
+        day_forecast_data = [weather_API.get_day_forecast(day) for weather_API in self.weather_APIs if weather_API.get_day_forecast(day) is not None]
+
+        return self.aggregate_data(day_forecast_data)
 
     def aggregate_data(self, data: list) -> dict | None:
         if not data:
             return None
 
         result = {}
-        keys = data[0].keys()
 
-        for key in keys:
+        for key in data[0]:
             values = []
 
             for d in data:
                 values.append(d[key])
             
-            if key != rke.CONDITION:
-                result[key] = self.get_min_max_mean(values)
-            else:
-                result[key] = values
-        
+            result[key] = self.get_min_max_mean(values)
+
         result["resources"] = len(data)
 
         return result
 
-    def get_min_max_mean(self, values: list) -> dict:
+    def get_min_max_mean(self, values: list) -> dict | list:
+        if (isinstance(values[0], str)):
+            return values
+
         min_value = min(values)
         max_value = max(values)
-        mean = sum(values) / len(values)
+        mean = round(statistics.mean(values), 1)
 
         return {"min": min_value, "max": max_value, "mean": mean}

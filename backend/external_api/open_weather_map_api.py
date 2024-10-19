@@ -1,6 +1,8 @@
 import os
 import requests
-from ..enums.result_key_enum import ResultKeyEnum as rke
+import statistics
+from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
+from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 from .cached_region_lat_lon_converter import CachedRegionLatLonConverter
 from .weather_api_base import WeatherAPIBase
 from ..utils.get_closest_number import get_closest_num
@@ -34,41 +36,53 @@ class OpenWeatherMapAPI(WeatherAPIBase):
         return False
 
     def get_current(self) -> dict:
-        return self.parse_info(self.data["current"])
+        return self.parse_hour_info(self.data["current"])
 
     def get_hour_forecast(self, day: int, hour: int) -> dict | None:
-        hour_infos = []  
-        hours = []
+        hour_infos = self.get_hour_infos(day)  
 
-        for hour_info in self.data["list"]:
-            if int(hour_info["dt_txt"].split()[0].split("-")[2]) == day:
-                hour_infos.append(hour_info)
+        if hour_infos:
+            hours = [self.get_hour(hour_info) for hour_info in hour_infos]
 
-                current_hour = hour_info["dt_txt"].split()[1].split(":")[0]
-                hours.append(int(current_hour))
-                
-                if int(current_hour) == hour:
-                    return self.parse_info(hour_info)
-
-        if hours:
             closest_hour = get_closest_num(hours, hour)
 
             if abs(hour - closest_hour) > 1:
                 return None
 
-            for hour_info in hour_infos:
-                if int(hour_info["dt_txt"].split()[1].split(":")[0]) == closest_hour:
-                    return self.parse_info(hour_info)
-
+            return self.parse_hour_info(hour_infos[hours.index(closest_hour)])
+ 
     def get_day_forecast(self, day: int) -> dict | None:
-        pass
+        hour_infos = self.get_hour_infos(day)
 
-    def parse_info(self, info: dict) -> dict:
+        if hour_infos:
+            parsed_hour_infos = [self.parse_hour_info(hour_info) for hour_info in hour_infos]
+
+            result = {}
+
+            result[drke.MIN_TEMPERATURE] = min([parsed_hour_info[hrke.TEMPERATURE] for parsed_hour_info in parsed_hour_infos])
+            result[drke.MAX_TEMPERATURE] = max([parsed_hour_info[hrke.TEMPERATURE] for parsed_hour_info in parsed_hour_infos])
+            result[drke.MAX_WIND] = max([parsed_hour_info[hrke.WIND] for parsed_hour_info in parsed_hour_infos])
+            result[drke.AVERAGE_HUMIDITY] = round(statistics.mean([parsed_hour_info[hrke.HUMIDITY] for parsed_hour_info in parsed_hour_infos]), 1)
+            result[drke.CONDITION] = [parsed_hour_info[hrke.CONDITION] for parsed_hour_info in parsed_hour_infos]
+
+            return result
+        
+    def parse_hour_info(self, info: dict) -> dict:
         result = {}
-        result[rke.TEMPERATURE_C] = info["main"]["temp"]
-        result[rke.WIND_KM] = info["wind"]["speed"]
-        result[rke.PRESSURE_MB] = info["main"]["pressure"]
-        result[rke.HUMIDITY] = info["main"]["humidity"]
-        result[rke.CONDITION] = info["weather"][0]["main"]
+
+        result[hrke.TEMPERATURE] = info["main"]["temp"]
+        result[hrke.WIND] = info["wind"]["speed"] * 3.6
+        result[hrke.PRESSURE] = info["main"]["pressure"]
+        result[hrke.HUMIDITY] = info["main"]["humidity"]
+        result[hrke.CONDITION] = info["weather"][0]["main"]
 
         return result   
+    
+    def get_hour_infos(self, day: int) -> list:
+        return [hour_info for hour_info in self.data["list"] if self.get_day(hour_info) == day]
+    
+    def get_hour(self, hour_info: dict) -> int:
+        return int(hour_info["dt_txt"].split()[1].split(":")[0])
+    
+    def get_day(self, hour_info: dict) -> int:
+        return int(hour_info["dt_txt"].split()[0].split("-")[2])

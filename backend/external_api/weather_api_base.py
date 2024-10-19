@@ -22,7 +22,3 @@ class WeatherAPIBase(ABC):
     def get_day_forecast(self, day: int) -> dict | None:
         pass
     
-    @abstractmethod
-    def parse_info(self, info: dict) -> dict:
-        pass
-

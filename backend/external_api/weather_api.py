@@ -1,7 +1,8 @@
 import os
 import requests
 from .weather_api_base import WeatherAPIBase
-from ..enums.result_key_enum import ResultKeyEnum as rke
+from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
+from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 
 
 class WeatherAPI(WeatherAPIBase):
@@ -18,24 +19,41 @@ class WeatherAPI(WeatherAPIBase):
         return False
 
     def get_current(self) -> dict:
-        return self.parse_info(self.data["current"])
+        return self.parse_hour_info(self.data["current"])
 
     def get_hour_forecast(self, day: int, hour: int) -> dict | None:
         for day_info in self.data["forecast"]["forecastday"]:
-            if int(day_info["date"].split("-")[2]) == day:
+            if self.get_day(day_info) == day:
                 for hour_info in day_info["hour"]:
-                    if int(hour_info["time"].split()[1].split(":")[0]) == hour:
-                        return self.parse_info(hour_info)
+                    if self.get_hour(hour_info) == hour:
+                        return self.parse_hour_info(hour_info)
 
     def get_day_forecast(self, day: int) -> dict | None:
-        pass
+        for day_info in self.data["forecast"]["forecastday"]:
+            if self.get_day(day_info) == day:
+                result = {}
 
-    def parse_info(self, info: dict) -> dict:
+                result[drke.MIN_TEMPERATURE] = day_info["day"]["mintemp_c"]
+                result[drke.MAX_TEMPERATURE] = day_info["day"]["maxtemp_c"]
+                result[drke.AVERAGE_HUMIDITY] = day_info["day"]["avghumidity"]
+                result[drke.MAX_WIND] = day_info["day"]["maxwind_kph"]
+                result[drke.CONDITION] = day_info["day"]["condition"]["text"]
+            
+                return result
+
+    def parse_hour_info(self, info: dict) -> dict:
         result = {}
-        result[rke.TEMPERATURE_C] = info["temp_c"]
-        result[rke.WIND_KM] = info["wind_kph"]
-        result[rke.PRESSURE_MB] = info["pressure_mb"]
-        result[rke.HUMIDITY] = info["humidity"]
-        result[rke.CONDITION] = info["condition"]["text"]
+
+        result[hrke.TEMPERATURE] = info["temp_c"]
+        result[hrke.WIND] = info["wind_kph"]
+        result[hrke.PRESSURE] = info["pressure_mb"]
+        result[hrke.HUMIDITY] = info["humidity"]
+        result[hrke.CONDITION] = info["condition"]["text"]
 
         return result
+    
+    def get_day(self, day_info: dict) -> int:
+        return int(day_info["date"].split("-")[2])
+    
+    def get_hour(self, hour_info: dict) -> int:
+        return int(hour_info["time"].split()[1].split(":")[0])

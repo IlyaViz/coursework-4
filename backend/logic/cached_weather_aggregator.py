@@ -8,7 +8,7 @@ class CachedWeatherAggregator():
     cache = {}
 
     @classmethod
-    def get_weather_aggregator(cls, weather_API_classes: tuple[WeatherAPIBase], region: str, days: int = MAX_DAYS) -> WeatherAggregator:
+    def get_weather_aggregator(cls, weather_API_classes: tuple, region: str, days: int = MAX_DAYS) -> WeatherAggregator:
         cls.clean_cache()
         
         key = (weather_API_classes, region, days)
