@@ -47,7 +47,7 @@ class WeatherAggregator():
         return result
 
     def get_min_max_mean(self, values: list) -> dict | list:
-        if (isinstance(values[0], str)):
+        if (isinstance(values[0], str) or isinstance(values[0], list)):
             return values
 
         min_value = min(values)
