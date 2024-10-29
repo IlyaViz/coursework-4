@@ -8,7 +8,12 @@ from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 class WeatherAPI(WeatherAPIBase):
     def update_data(self, days: int) -> bool:
         API_key = os.environ["WEATHER_API_KEY"]
-        url = f"http://api.weatherapi.com/v1/forecast.json?key={API_key}&q={self.region}&days={days}"
+
+        if self.pos is None:
+            return False
+
+        lat, lon = self.pos 
+        url = f"http://api.weatherapi.com/v1/forecast.json?key={API_key}&q={lat},{lon}&days={days}"
         response = requests.get(url)
 
         if response.status_code == 200:

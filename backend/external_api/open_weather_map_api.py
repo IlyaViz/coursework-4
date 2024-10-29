@@ -3,7 +3,6 @@ import requests
 import statistics
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from ..enums.day_result_key_enum import DayResultKeyEnum as drke
-from .cached_region_lat_lon_converter import CachedRegionLatLonConverter
 from .weather_api_base import WeatherAPIBase
 from ..utils.get_closest_number import get_closest_num
 
@@ -11,12 +10,11 @@ from ..utils.get_closest_number import get_closest_num
 class OpenWeatherMapAPI(WeatherAPIBase):
     def update_data(self, days: int) -> bool:
         API_key = os.environ["OPEN_WEATHER_MAP_API_KEY"]
-        pos = CachedRegionLatLonConverter.convert(self.region)
 
-        if pos is None:
+        if self.pos is None:
             return False
 
-        lat, lon = pos 
+        lat, lon = self.pos 
         url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_key}&units=metric"
         response = requests.get(url)
         
