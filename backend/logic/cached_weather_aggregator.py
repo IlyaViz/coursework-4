@@ -12,10 +12,9 @@ class CachedWeatherAggregator():
         cls.clean_cache()
         
         key = (weather_API_classes, region, days)
-        value = cls.cache.get(key, 0)
 
-        if value != 0:
-            return value[1]
+        if key in cls.cache:
+            return cls.cache[key][1]
         else:
             weather_aggregator = WeatherAggregator(weather_API_classes, region, days)
             cls.cache[key] = (time() + CACHE_TIME, weather_aggregator)

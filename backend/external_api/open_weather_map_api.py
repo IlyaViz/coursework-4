@@ -9,10 +9,10 @@ from ..utils.get_closest_number import get_closest_num
 
 class OpenWeatherMapAPI(WeatherAPIBase):
     def update_data(self, days: int) -> bool:
-        API_key = os.environ["OPEN_WEATHER_MAP_API_KEY"]
-
         if self.pos is None:
             return False
+        
+        API_key = os.environ["OPEN_WEATHER_MAP_API_KEY"]
 
         lat, lon = self.pos 
         url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_key}&units=metric"

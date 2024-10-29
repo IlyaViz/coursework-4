@@ -7,7 +7,7 @@ class CachedRegionLatLonConverter():
     
     @classmethod
     def convert(cls, region: str) -> tuple | None:
-        if cls.cache.get(region, 0) != 0:
+        if region in cls.cache:
             return cls.cache[region]
 
         API_key = os.environ["GEOCODE_API_KEY"]
