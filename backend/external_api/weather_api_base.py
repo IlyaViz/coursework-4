@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from .cached_region_lat_lon_converter import CachedRegionLatLonConverter
 
 
 class WeatherAPIBase(ABC):
-    def __init__(self, region: str) -> None:
-        self.pos = CachedRegionLatLonConverter.convert(region)
+    def __init__(self, coordinates: tuple) -> None:
+        self.coordinates = coordinates
         self.data = {}
 
     @abstractmethod

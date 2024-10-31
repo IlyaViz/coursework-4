@@ -1,14 +1,20 @@
 import statistics
-from ..external_api.weather_api_base import WeatherAPIBase
+from fastapi import HTTPException
+from ..external_api.cached_region_lat_lon_converter import CachedRegionLatLonConverter
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 
 
 class WeatherAggregator():
     def __init__(self, weather_API_classes: tuple, region: str, days: int) -> None:
+        coordinates = CachedRegionLatLonConverter.convert(region)
+
+        if coordinates is None:
+            raise HTTPException(404, "Region doesn't exist")
+
         self.weather_APIs = []
 
         for weather_API_class in weather_API_classes:
-            weather_API = weather_API_class(region)
+            weather_API = weather_API_class(coordinates)
             
             if weather_API.update_data(days):
                 self.weather_APIs.append(weather_API)
