@@ -30,7 +30,7 @@ class WeatherAPI(WeatherAPIBase):
                     if self._get_hour(hour_info) == hour:
                         return self._parse_hour_info(hour_info)
 
-    def get_day_forecast(self, day: int) -> dict[hrke] | None:
+    def get_day_forecast(self, day: int) -> dict[drke] | None:
         for day_info in self.data["forecast"]["forecastday"]:
             if self._get_day(day_info) == day:
                 result = {}
