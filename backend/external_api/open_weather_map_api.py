@@ -11,7 +11,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
     def update_data(self, days: int) -> bool:
         API_key = os.environ["OPEN_WEATHER_MAP_API_KEY"]
 
-        lat, lon = self.coordinates
+        lat, lon = self._coordinates
         url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_key}&units=metric"
         response = requests.get(url)
         
@@ -30,27 +30,27 @@ class OpenWeatherMapAPI(WeatherAPIBase):
                 
         return False
 
-    def get_current(self) -> dict:
-        return self.parse_hour_info(self.data["current"])
+    def get_current(self) -> dict[hrke]:
+        return self._parse_hour_info(self.data["current"])
 
-    def get_hour_forecast(self, day: int, hour: int) -> dict | None:
-        hour_infos = self.get_hour_infos(day)  
+    def get_hour_forecast(self, day: int, hour: int) -> dict[hrke] | None:
+        hour_infos = self._get_hour_infos(day)  
 
         if hour_infos:
-            hours = [self.get_hour(hour_info) for hour_info in hour_infos]
+            hours = [self._get_hour(hour_info) for hour_info in hour_infos]
 
             closest_hour = get_closest_num(hours, hour)
 
             if abs(hour - closest_hour) > 1:
                 return None
 
-            return self.parse_hour_info(hour_infos[hours.index(closest_hour)])
+            return self._parse_hour_info(hour_infos[hours.index(closest_hour)])
  
-    def get_day_forecast(self, day: int) -> dict | None:
-        hour_infos = self.get_hour_infos(day)
+    def get_day_forecast(self, day: int) -> dict[drke] | None:
+        hour_infos = self._get_hour_infos(day)
 
         if hour_infos:
-            parsed_hour_infos = [self.parse_hour_info(hour_info) for hour_info in hour_infos]
+            parsed_hour_infos = [self._parse_hour_info(hour_info) for hour_info in hour_infos]
 
             result = {}
 
@@ -62,7 +62,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
 
             return result
         
-    def parse_hour_info(self, info: dict) -> dict:
+    def _parse_hour_info(self, info: dict) -> dict[hrke]:
         result = {}
 
         result[hrke.TEMPERATURE] = info["main"]["temp"]
@@ -73,11 +73,11 @@ class OpenWeatherMapAPI(WeatherAPIBase):
 
         return result   
     
-    def get_hour_infos(self, day: int) -> list:
-        return [hour_info for hour_info in self.data["list"] if self.get_day(hour_info) == day]
+    def _get_hour_infos(self, day: int) -> list[dict]:
+        return [hour_info for hour_info in self.data["list"] if self._get_day(hour_info) == day]
     
-    def get_hour(self, hour_info: dict) -> int:
+    def _get_hour(self, hour_info: dict) -> int:
         return int(hour_info["dt_txt"].split()[1].split(":")[0])
     
-    def get_day(self, hour_info: dict) -> int:
+    def _get_day(self, hour_info: dict) -> int:
         return int(hour_info["dt_txt"].split()[0].split("-")[2])

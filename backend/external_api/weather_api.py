@@ -9,7 +9,7 @@ class WeatherAPI(WeatherAPIBase):
     def update_data(self, days: int) -> bool:
         API_key = os.environ["WEATHER_API_KEY"]
         
-        lat, lon = self.coordinates
+        lat, lon = self._coordinates
         url = f"http://api.weatherapi.com/v1/forecast.json?key={API_key}&q={lat},{lon}&days={days}"
         response = requests.get(url)
 
@@ -20,19 +20,19 @@ class WeatherAPI(WeatherAPIBase):
         
         return False
 
-    def get_current(self) -> dict:
-        return self.parse_hour_info(self.data["current"])
+    def get_current(self) -> dict[hrke]:
+        return self._parse_hour_info(self.data["current"])
 
-    def get_hour_forecast(self, day: int, hour: int) -> dict | None:
+    def get_hour_forecast(self, day: int, hour: int) -> dict[hrke] | None:
         for day_info in self.data["forecast"]["forecastday"]:
-            if self.get_day(day_info) == day:
+            if self._get_day(day_info) == day:
                 for hour_info in day_info["hour"]:
-                    if self.get_hour(hour_info) == hour:
-                        return self.parse_hour_info(hour_info)
+                    if self._get_hour(hour_info) == hour:
+                        return self._parse_hour_info(hour_info)
 
-    def get_day_forecast(self, day: int) -> dict | None:
+    def get_day_forecast(self, day: int) -> dict[hrke] | None:
         for day_info in self.data["forecast"]["forecastday"]:
-            if self.get_day(day_info) == day:
+            if self._get_day(day_info) == day:
                 result = {}
 
                 result[drke.MIN_TEMPERATURE] = day_info["day"]["mintemp_c"]
@@ -43,7 +43,7 @@ class WeatherAPI(WeatherAPIBase):
             
                 return result
 
-    def parse_hour_info(self, info: dict) -> dict:
+    def _parse_hour_info(self, info: dict) -> dict[hrke]:
         result = {}
 
         result[hrke.TEMPERATURE] = info["temp_c"]
@@ -54,8 +54,8 @@ class WeatherAPI(WeatherAPIBase):
 
         return result
     
-    def get_day(self, day_info: dict) -> int:
+    def _get_day(self, day_info: dict) -> int:
         return int(day_info["date"].split("-")[2])
     
-    def get_hour(self, hour_info: dict) -> int:
+    def _get_hour(self, hour_info: dict) -> int:
         return int(hour_info["time"].split()[1].split(":")[0])

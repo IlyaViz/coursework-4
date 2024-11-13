@@ -1,4 +1,4 @@
-def get_closest_num(nums: list[int], target_num: int):
+def get_closest_num(nums: list[int], target_num: int) -> int:
     min_difference_index = 0
 
     for index in range(len(nums)):

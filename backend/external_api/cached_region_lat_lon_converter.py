@@ -3,12 +3,12 @@ import os
 
 
 class CachedRegionLatLonConverter():
-    cache = {}
+    _cache = {}
     
     @classmethod
-    def convert(cls, region: str) -> tuple | None:
-        if region in cls.cache:
-            return cls.cache[region]
+    def convert(cls, region: str) -> tuple[float, float] | None:
+        if region in cls._cache:
+            return cls._cache[region]
 
         API_key = os.environ["GEOCODE_API_KEY"]
         url = f"https://geocode.maps.co/search?q={region}&api_key={API_key}"
@@ -21,6 +21,6 @@ class CachedRegionLatLonConverter():
                 lat = float(data[0]["lat"])
                 lon = float(data[0]["lon"])
                 
-                cls.cache[region] = (lat, lon)
+                cls._cache[region] = (lat, lon)
 
                 return (lat, lon)
