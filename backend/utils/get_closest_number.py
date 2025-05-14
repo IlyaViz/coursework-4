@@ -6,4 +6,3 @@ def get_closest_num(nums: list[int], target_num: int) -> int:
             min_difference_index = index
 
     return nums[min_difference_index]
-

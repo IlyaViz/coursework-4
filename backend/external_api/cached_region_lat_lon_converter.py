@@ -2,9 +2,9 @@ import requests
 import os
 
 
-class CachedRegionLatLonConverter():
+class CachedRegionLatLonConverter:
     _cache = {}
-    
+
     @classmethod
     def convert(cls, region: str) -> tuple[float, float] | None:
         if region in cls._cache:
@@ -20,7 +20,7 @@ class CachedRegionLatLonConverter():
             if data:
                 lat = float(data[0]["lat"])
                 lon = float(data[0]["lon"])
-                
+
                 cls._cache[region] = (lat, lon)
 
                 return (lat, lon)

@@ -23,4 +23,3 @@ class WeatherAPIBase(ABC):
     @abstractmethod
     def get_day_forecast(self, day: int) -> dict[drke] | None:
         pass
-    

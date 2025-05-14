@@ -8,16 +8,16 @@ from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 class WeatherAPI(WeatherAPIBase):
     def update_data(self, days: int) -> bool:
         API_key = os.environ["WEATHER_API_KEY"]
-        
+
         lat, lon = self._coordinates
         url = f"http://api.weatherapi.com/v1/forecast.json?key={API_key}&q={lat},{lon}&days={days}"
         response = requests.get(url)
 
         if response.status_code == 200:
-            self.data = response.json() 
-            
+            self.data = response.json()
+
             return True
-        
+
         return False
 
     def get_current(self) -> dict[hrke]:
@@ -40,7 +40,7 @@ class WeatherAPI(WeatherAPIBase):
                 result[drke.AVERAGE_HUMIDITY] = day_info["day"]["avghumidity"]
                 result[drke.MAX_WIND] = day_info["day"]["maxwind_kph"]
                 result[drke.CONDITION] = day_info["day"]["condition"]["text"]
-            
+
                 return result
 
     def _parse_hour_info(self, info: dict) -> dict[hrke]:
@@ -53,9 +53,9 @@ class WeatherAPI(WeatherAPIBase):
         result[hrke.CONDITION] = info["condition"]["text"]
 
         return result
-    
+
     def _get_day(self, day_info: dict) -> int:
         return int(day_info["date"].split("-")[2])
-    
+
     def _get_hour(self, hour_info: dict) -> int:
         return int(hour_info["time"].split()[1].split(":")[0])
