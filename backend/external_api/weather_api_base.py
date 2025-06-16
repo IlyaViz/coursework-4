@@ -4,22 +4,17 @@ from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 
 
 class WeatherAPIBase(ABC):
-    def __init__(self, coordinates: tuple) -> None:
-        self._coordinates = coordinates
-        self._data = {}
-
+    @classmethod
     @abstractmethod
-    def update_data(self, days: int) -> bool:
+    def get_weather(cls, coordinates: tuple[float, float]) -> dict:
         pass
 
+    @classmethod
     @abstractmethod
-    def get_current(self) -> dict[hrke]:
+    def _get_daily_data(cls, data: dict) -> dict:
         pass
 
+    @classmethod
     @abstractmethod
-    def get_hour_forecast(self, day: int, hour: int) -> dict[hrke] | None:
-        pass
-
-    @abstractmethod
-    def get_day_forecast(self, day: int) -> dict[drke] | None:
+    def _get_hourly_data(cls, data: dict) -> dict:
         pass

@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi import Query
 from fastapi import HTTPException
+from typing import List
 from dotenv import load_dotenv
-from .logic.cached_weather_aggregator import CachedWeatherAggregator
 from .external_api.weather_api import WeatherAPI
 from .external_api.open_weather_map_api import OpenWeatherMapAPI
 from .logic.weather_aggregator import WeatherAggregator
+from .external_api.region_helper import RegionHelper
 
 
 load_dotenv()
@@ -15,48 +16,25 @@ app = FastAPI()
 weather_API_classes = (WeatherAPI, OpenWeatherMapAPI)
 
 
-def get_weather_aggregator(
-    selected_weather_API_class_names: list[str], region: str
-) -> WeatherAggregator:
-    if not selected_weather_API_class_names:
-        raise HTTPException(status_code=404, detail="Enter at least one API")
+@app.get("/forecast")
+def get_weather_forecast(region: str, API_classes: List[str] = Query(None)) -> dict:
+    if not API_classes:
+        raise HTTPException(400, "API classes must be provided")
 
-    selected_weather_API_classes = tuple(
-        [
-            weather_API_class
-            for weather_API_class in weather_API_classes
-            if weather_API_class.__name__ in selected_weather_API_class_names
-        ]
-    )
+    selected_API_classes = [
+        API_class
+        for API_class in weather_API_classes
+        if API_class.__name__ in API_classes
+    ]
 
-    return CachedWeatherAggregator.get_weather_aggregator(
-        selected_weather_API_classes, region
-    )
+    if not selected_API_classes:
+        raise HTTPException(400, "No valid API classes provided")
+
+    return WeatherAggregator.get_aggregated_weather(region, selected_API_classes)
 
 
-@app.get("/weather_API_class_names/")
-def get_weather_API_class_names():
-    return [weather_API_class.__name__ for weather_API_class in weather_API_classes]
+@app.get("/partial_city_helper")
+def get_partial_city_helper(partial_city: str) -> dict:
+    options = RegionHelper.get_options(partial_city)
 
-
-@app.get("/current/")
-def get_current(region: str, API_class_names: list[str] = Query(None)):
-    weather_aggregator = get_weather_aggregator(API_class_names, region)
-
-    return weather_aggregator.get_aggregated_current()
-
-
-@app.get("/forecast/hour")
-def get_hour_forecast(
-    region: str, day: int, hour: int, API_class_names: list[str] = Query(None)
-):
-    weather_aggregator = get_weather_aggregator(API_class_names, region)
-
-    return weather_aggregator.get_aggregated_hour_forecast(day, hour)
-
-
-@app.get("/forecast/day")
-def get_day_forecast(region: str, day: int, API_class_names: list[str] = Query(None)):
-    weather_aggregator = get_weather_aggregator(API_class_names, region)
-
-    return weather_aggregator.get_aggregated_day_forecast(day)
+    return {"options": options}
