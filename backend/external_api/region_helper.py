@@ -2,13 +2,13 @@ import requests
 import os
 
 
-API_key = os.environ["GEOCODE_API_KEY"]
+API_KEY = os.environ["GEOCODE_API_KEY"]
 
 
 class RegionHelper:
     @staticmethod
     def convert(region: str) -> tuple[float, float] | None:
-        url = f"https://geocode.maps.co/search?q={region}&api_key={API_key}"
+        url = f"https://geocode.maps.co/search?q={region}&api_key={API_KEY}"
         response = requests.get(url)
 
         if response.status_code == 200:
@@ -22,7 +22,7 @@ class RegionHelper:
 
     @staticmethod
     def get_options(partial_city: str) -> list[str]:
-        url = f"https://geocode.maps.co/search?q={partial_city}&api_key={API_key}"
+        url = f"https://geocode.maps.co/search?q={partial_city}&api_key={API_KEY}"
         response = requests.get(url)
 
         result = []
