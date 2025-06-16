@@ -3,13 +3,14 @@ from fastapi import Query
 from fastapi import HTTPException
 from typing import List
 from dotenv import load_dotenv
+
+load_dotenv()
+
 from .external_api.weather_api import WeatherAPI
 from .external_api.open_weather_map_api import OpenWeatherMapAPI
 from .logic.weather_aggregator import WeatherAggregator
 from .external_api.region_helper import RegionHelper
 
-
-load_dotenv()
 
 app = FastAPI()
 
