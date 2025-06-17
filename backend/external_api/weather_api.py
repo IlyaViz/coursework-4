@@ -3,6 +3,7 @@ import requests
 from .weather_api_base import WeatherAPIBase
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from ..enums.day_result_key_enum import DayResultKeyEnum as drke
+from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
 
 
 API_KEY = os.environ.get("WEATHER_API_KEY")
@@ -10,7 +11,7 @@ API_KEY = os.environ.get("WEATHER_API_KEY")
 
 class WeatherAPI(WeatherAPIBase):
     @classmethod
-    def get_weather(cls, coordinates: tuple[float, float]) -> dict:
+    def get_weather(cls, coordinates: tuple[float, float]) -> dict[rtke, dict]:
         lat, lon = coordinates
         url = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={lat},{lon}&days=14"
         response = requests.get(url)
@@ -22,13 +23,13 @@ class WeatherAPI(WeatherAPIBase):
 
         result = {}
 
-        result["daily"] = cls._get_daily_data(data)
-        result["hourly"] = cls._get_hourly_data(data)
+        result[rtke.DAILY] = cls._get_daily_data(data)
+        result[rtke.HOURLY] = cls._get_hourly_data(data)
 
         return result
 
     @classmethod
-    def _get_daily_data(cls, data: dict) -> dict:
+    def _get_daily_data(cls, data: dict) -> dict[str, dict]:
         result = {}
 
         for day in data["forecast"]["forecastday"]:
@@ -45,7 +46,7 @@ class WeatherAPI(WeatherAPIBase):
         return result
 
     @classmethod
-    def _get_hourly_data(cls, data: dict) -> dict:
+    def _get_hourly_data(cls, data: dict) -> dict[str, dict]:
         result = {}
 
         for day in data["forecast"]["forecastday"]:

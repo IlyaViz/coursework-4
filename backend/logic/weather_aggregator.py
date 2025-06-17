@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from ..enums.day_result_key_enum import DayResultKeyEnum as drke
+from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
 from ..external_api.weather_api_base import WeatherAPIBase
 from ..external_api.region_helper import RegionHelper
 
@@ -31,9 +32,9 @@ class WeatherAggregator:
 
         template_API_result = data[list(data.keys())[0]]
 
-        for day in template_API_result["daily"]:
+        for day in template_API_result[rtke.DAILY]:
             if not cls._check_dicts_have_time_key(
-                [d["daily"] for d in data.values()], day
+                [d[rtke.DAILY] for d in data.values()], day
             ):
                 continue
 
@@ -44,20 +45,20 @@ class WeatherAggregator:
                 result[day]["indicators"][key] = {}
 
                 for API_class in data:
-                    value = data[API_class]["daily"][day][key]
+                    value = data[API_class][rtke.DAILY][day][key]
 
                     result[day]["indicators"][key][API_class] = value
 
             result[day]["hours"] = {}
 
-            for hour in template_API_result["hourly"]:
+            for hour in template_API_result[rtke.HOURLY]:
                 date = hour.split(" ")[0]
 
                 if date != day:
                     continue
 
                 if not cls._check_dicts_have_time_key(
-                    [d["hourly"] for d in data.values()], hour
+                    [d[rtke.HOURLY] for d in data.values()], hour
                 ):
                     continue
 
@@ -67,7 +68,7 @@ class WeatherAggregator:
                     result[day]["hours"][hour][key] = {}
 
                     for API_class in data:
-                        value = data[API_class]["hourly"][hour][key]
+                        value = data[API_class][rtke.HOURLY][hour][key]
 
                         result[day]["hours"][hour][key][API_class] = value
 
