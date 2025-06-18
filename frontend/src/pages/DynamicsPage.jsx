@@ -21,25 +21,34 @@ const DynamicsPage = () => {
   const [dailyPeriod, setDailyPeriod] = useState([null, null]);
   const [indicator, setIndicator] = useState(null);
 
-  const { forecastData } = useForecastContext();
+  const { city, forecast, loadingForecast, errorForecast } =
+    useForecastContext();
 
   useEffect(() => {
-    if (forecastData) {
-      const [minDate, maxDate] = getMinMaxDates(forecastData);
-      const indicators = getIndicators(forecastData);
+    if (forecast) {
+      const [minDate, maxDate] = getMinMaxDates(forecast);
+      const indicators = getIndicators(forecast);
 
       setDailyPeriod([minDate, maxDate]);
       setIndicator(indicators[0]);
     }
-  }, [forecastData]);
+  }, [forecast]);
 
-  if (!forecastData || dailyPeriod[0] === null || indicator === null) {
-    return <div>No data available for dynamics.</div>;
+  
+  if (loadingForecast) {
+    return <h1 className="text-center">Loading...</h1>;
   }
 
+  if (errorForecast) {
+    return <h1 className="text-center">No data available for {city}</h1>;
+  }
+
+  if (!forecast || !dailyPeriod[0] || !dailyPeriod[1] || !indicator) {
+    return <h1 className="text-center">Processing...</h1>;
+  }
   const data = [];
 
-  Object.entries(forecastData).forEach(([date, dateData]) => {
+  Object.entries(forecast).forEach(([date, dateData]) => {
     if (date >= dailyPeriod[0] && date <= dailyPeriod[1]) {
       Object.entries(dateData.hours).forEach(([hour, hourData]) => {
         data.push({
@@ -50,8 +59,8 @@ const DynamicsPage = () => {
     }
   });
 
-  const [minDate, maxDate] = getMinMaxDates(forecastData);
-  const indicators = getIndicators(forecastData);
+  const [minDate, maxDate] = getMinMaxDates(forecast);
+  const indicators = getIndicators(forecast);
 
   return (
     <div className="flex flex-col">

@@ -2,13 +2,24 @@ import { useForecastContext } from "../contexts/ForecastContext";
 import ForecastBlock from "../components/ForecastBlock";
 
 const GeneralPage = () => {
-  const { city, forecastData } = useForecastContext();
+  const { city, forecast, loadingForecast, errorForecast } =
+    useForecastContext();
 
-  if (!forecastData) {
-    return <div>No data for current city</div>;
+  if (loadingForecast) {
+    return <h1 className="text-center">Loading...</h1>;
   }
 
-  return <ForecastBlock forecastData={forecastData} onClickBaseLink={city} />;
+  if (errorForecast) {
+    return <h1 className="text-center">No data available for {city}</h1>;
+  }
+
+  if (!forecast) {
+    return <h1 className="text-center">Processing...</h1>;
+  }
+
+  console.log(forecast, loadingForecast, errorForecast);
+
+  return <ForecastBlock forecast={forecast} onClickBaseLink={city} />;
 };
 
 export default GeneralPage;

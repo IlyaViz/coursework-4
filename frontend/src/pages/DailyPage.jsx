@@ -3,16 +3,26 @@ import { useParams } from "react-router";
 import ForecastBlock from "../components/ForecastBlock";
 
 const DailyPage = () => {
-  const { forecastData } = useForecastContext();
+  const { forecast, loadingForecast, errorForecast, city } =
+    useForecastContext();
+
   const { date } = useParams();
 
-  if (!forecastData) {
-    return <div>No data available for the selected date</div>;
+  if (loadingForecast) {
+    return <h1 className="text-center">Loading...</h1>;
   }
 
-  const hourlyData = forecastData[date].hours;
+  if (errorForecast) {
+    return <h1 className="text-center">No data available for {city}</h1>;
+  }
 
-  return <ForecastBlock forecastData={hourlyData} />;
+  if (!forecast) {
+    return <h1 className="text-center">Processing...</h1>;
+  }
+
+  const hourlyData = forecast[date].hours;
+
+  return <ForecastBlock forecast={hourlyData} />;
 };
 
 export default DailyPage;

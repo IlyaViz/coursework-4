@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import useFetch from "../hooks/useFetch";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -6,69 +7,61 @@ const ForecastContext = createContext();
 
 const ForecastProvider = ({ children }) => {
   const [city, setCity] = useState("");
-  const [availableAPIs, setAvailableAPIs] = useState([]); 
+  const [availableAPIs, setAvailableAPIs] = useState([]);
   const [usedAPIs, setUsedAPIs] = useState([]);
-  const [forecastData, setForecastData] = useState(null);
+  const [forecast, setForecast] = useState(null);
+
+  const {
+    data: APIClassesData,
+    loading: loadingAPIClasses,
+    error: errorAPIClasses,
+  } = useFetch(`${BACKEND_URL}/api_classes`);
+
+  const forecastParams = new URLSearchParams();
+
+  forecastParams.append("region", city);
+  usedAPIs.forEach((API) => {
+    forecastParams.append("API_classes", API);
+  });
+
+  const forecastURL = `${BACKEND_URL}/forecast?${forecastParams.toString()}`;
+
+  const shouldFetchForecast = city && usedAPIs.length > 0;
+
+  const {
+    data: forecastData,
+    loading: loadingForecast,
+    error: errorForecast,
+  } = useFetch(forecastURL, shouldFetchForecast);
 
   useEffect(() => {
-    async function fetchForecast() {
-      if (!city || usedAPIs.length === 0) {
-        return;
-      }
-
-      const params = new URLSearchParams();
-
-      params.append("region", city);
-      usedAPIs.forEach((API) => {
-        params.append("API_classes", API);
-      });
-
-      const response = await fetch(
-        `${BACKEND_URL}/forecast?${params.toString()}`
-      );
-
-      if (!response.ok) {
-        return;
-      }
-
-      const data = await response.json();
-
-      console.log(data);
-
-      setForecastData(data);
+    if (forecastData) {
+      setForecast(forecastData);
     }
-
-    fetchForecast();
-  }, [city, usedAPIs]);
+  }, [forecastData]);
 
   useEffect(() => {
-    const fetchAPIs = async () => {
-      const response = await fetch(`${BACKEND_URL}/api_classes`);
-
-      console.log(`${BACKEND_URL}/api_classes`);
-      if (!response.ok) {
-        return;
-      }
-
-      const data = await response.json();
-      const APIClasses = data.api_classes;
+    if (APIClassesData) {
+      const APIClasses = APIClassesData.api_classes;
 
       setAvailableAPIs(APIClasses);
       setUsedAPIs(APIClasses);
-    };
-
-    fetchAPIs();
-  }, []);
+    }
+  }, [APIClassesData]);
 
   return (
     <ForecastContext.Provider
       value={{
         city,
-        forecastData,
+        forecast,
         usedAPIs,
         availableAPIs,
         setCity,
         setUsedAPIs,
+        loadingAPIClasses,
+        errorAPIClasses,
+        loadingForecast,
+        errorForecast,
       }}
     >
       {children}

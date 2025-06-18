@@ -1,12 +1,10 @@
 import ConditionalLink from "./ConditionalLink";
 import generateServiceColor from "../utils/serviceColorGenerator";
 
-const ForecastBlock = ({ forecastData, onClickBaseLink }) => {
-  console.log(forecastData);
-
+const ForecastBlock = ({ forecast, onClickBaseLink }) => {
   return (
     <div className="flex justify-around gap-4">
-      {Object.entries(forecastData).map(([time, data]) => (
+      {Object.entries(forecast).map(([time, data]) => (
         <ConditionalLink
           to={`/${onClickBaseLink}/${time}`}
           condition={onClickBaseLink}

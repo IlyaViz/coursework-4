@@ -6,6 +6,7 @@ import DailyPage from "./pages/DailyPage";
 import GeneralPage from "./pages/GeneralPage";
 import DynamicsPage from "./pages/DynamicsPage";
 import MainLayout from "./layouts/MainLayout";
+import HomePage from "./pages/HomePage";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       </ForecastProvider>
     ),
     children: [
+      { path: "", element: <HomePage /> },
       { path: ":city", element: <GeneralPage /> },
       { path: ":city/:date", element: <DailyPage /> },
       { path: ":city/dynamics", element: <DynamicsPage /> },
