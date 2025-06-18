@@ -2,8 +2,6 @@ import { useLocation, useNavigate } from "react-router";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "./SelectButton";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
 const Header = () => {
   const { city, setUsedAPIs, availableAPIs, usedAPIs } = useForecastContext();
 
