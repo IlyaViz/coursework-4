@@ -1,18 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { useNavigate } from "react-router";
-
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const ForecastContext = createContext();
 
 const ForecastProvider = ({ children }) => {
   const [city, setCity] = useState("");
-  const [availableAPIs, setAvailableAPIs] = useState([]);
+  const [availableAPIs, setAvailableAPIs] = useState([]); 
   const [usedAPIs, setUsedAPIs] = useState([]);
   const [forecastData, setForecastData] = useState(null);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchForecast() {
@@ -63,24 +59,6 @@ const ForecastProvider = ({ children }) => {
 
     fetchAPIs();
   }, []);
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const response = await fetch(
-          `${BACKEND_URL}/convert_coordinates?lat=${position.coords.latitude}&lon=${position.coords.longitude}`
-        );
-
-        if (!response.ok) {
-          return;
-        }
-
-        const data = await response.json();
-
-        navigate(`/${data.region}`);
-      });
-    }
-  }, [navigate]);
 
   return (
     <ForecastContext.Provider

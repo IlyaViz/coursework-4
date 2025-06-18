@@ -73,7 +73,7 @@ const Header = () => {
               Weather for <span className="font-bold">{city}</span>
             </h1>
 
-            <div className="flex gap-1 mt-2">
+            <div className="flex justify-center gap-1 mt-2">
               <SelectButton
                 onClick={() => navigate(`/${city}`)}
                 selected={!isDynamicsPage}

@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { ForecastProvider } from "./contexts/ForecastContext";
 import DailyPage from "./pages/DailyPage";
 import GeneralPage from "./pages/GeneralPage";
 import DynamicsPage from "./pages/DynamicsPage";
@@ -10,7 +11,11 @@ import "./index.css";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <ForecastProvider>
+        <MainLayout />
+      </ForecastProvider>
+    ),
     children: [
       { path: ":city", element: <GeneralPage /> },
       { path: ":city/:date", element: <DailyPage /> },
@@ -21,6 +26,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </StrictMode>
 );

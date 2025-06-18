@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "../components/SelectButton";
 import generateServiceColor from "../utils/serviceColorGenerator";
-import useSyncCityParams from "../hooks/useSyncCityParams";
 
 const getMinMaxDates = (data) => {
   const dates = Object.keys(data);
@@ -19,8 +18,6 @@ const getIndicators = (data) => {
 };
 
 const DynamicsPage = () => {
-  useSyncCityParams();
-
   const [dailyPeriod, setDailyPeriod] = useState([null, null]);
   const [indicator, setIndicator] = useState(null);
 

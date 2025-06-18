@@ -1,11 +1,8 @@
 import { useForecastContext } from "../contexts/ForecastContext";
 import { useParams } from "react-router";
 import ForecastBlock from "../components/ForecastBlock";
-import useSyncCityParams from "../hooks/useSyncCityParams";
 
 const DailyPage = () => {
-  useSyncCityParams();
-
   const { forecastData } = useForecastContext();
   const { date } = useParams();
 

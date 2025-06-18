@@ -1,10 +1,7 @@
 import { useForecastContext } from "../contexts/ForecastContext";
 import ForecastBlock from "../components/ForecastBlock";
-import useSyncCityParams from "../hooks/useSyncCityParams";
 
 const GeneralPage = () => {
-  useSyncCityParams();
-
   const { city, forecastData } = useForecastContext();
 
   if (!forecastData) {
