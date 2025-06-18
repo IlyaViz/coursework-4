@@ -3,6 +3,7 @@ from fastapi import Query
 from fastapi import HTTPException
 from typing import List
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
@@ -13,6 +14,14 @@ from .external_api.region_helper import RegionHelper
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 weather_API_classes = (WeatherAPI, OpenWeatherMapAPI)
 
@@ -39,3 +48,18 @@ def get_partial_city_helper(partial_city: str) -> dict:
     options = RegionHelper.get_options(partial_city)
 
     return {"options": options}
+
+@app.get("/convert_coordinates")
+def convert_coordinates(lat: float, lon: float) -> dict:
+    region = RegionHelper.convert_to_region((lat, lon))
+
+    if region is None:
+        raise HTTPException(404, "Coordinates do not correspond to a valid region")
+
+    return {"region": region}
+
+@app.get("/api_classes")
+def get_api_classes() -> dict:
+    api_classes = [cls.__name__ for cls in weather_API_classes]
+
+    return {"api_classes": api_classes}

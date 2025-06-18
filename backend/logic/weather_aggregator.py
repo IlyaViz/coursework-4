@@ -11,7 +11,7 @@ class WeatherAggregator:
     def get_aggregated_weather(
         cls, region: str, API_classes: list[WeatherAPIBase]
     ) -> dict | None:
-        coordinates = RegionHelper.convert(region)
+        coordinates = RegionHelper.convert_to_coordinates(region)
 
         if coordinates is None:
             raise HTTPException(404, "Region doesn't exist")
@@ -49,16 +49,26 @@ class WeatherAggregator:
 
                     result[day]["indicators"][key][API_class] = value
 
+                if (
+                    not isinstance(value, str)
+                    and len(result[day]["indicators"][key]) > 1
+                ):
+                    result[day]["indicators"][key]["average"] = round(
+                        sum(result[day]["indicators"][key].values())
+                        / len(result[day]["indicators"][key]),
+                        2,
+                    )
+
             result[day]["hours"] = {}
 
-            for hour in template_API_result[rtke.HOURLY]:
-                date = hour.split(" ")[0]
+            for time in template_API_result[rtke.HOURLY]:
+                date, hour = time.split(" ")
 
                 if date != day:
                     continue
 
                 if not cls._check_dicts_have_time_key(
-                    [d[rtke.HOURLY] for d in data.values()], hour
+                    [d[rtke.HOURLY] for d in data.values()], time
                 ):
                     continue
 
@@ -68,9 +78,19 @@ class WeatherAggregator:
                     result[day]["hours"][hour][key] = {}
 
                     for API_class in data:
-                        value = data[API_class][rtke.HOURLY][hour][key]
+                        value = data[API_class][rtke.HOURLY][time][key]
 
                         result[day]["hours"][hour][key][API_class] = value
+
+                    if (
+                        not isinstance(value, str)
+                        and len(result[day]["hours"][hour][key]) > 1
+                    ):
+                        result[day]["hours"][hour][key]["average"] = round(
+                            sum(result[day]["hours"][hour][key].values())
+                            / len(result[day]["hours"][hour][key]),
+                            2,
+                        )
 
         return result
 

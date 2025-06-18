@@ -7,7 +7,7 @@ API_KEY = os.environ["GEOCODE_API_KEY"]
 
 class RegionHelper:
     @staticmethod
-    def convert(region: str) -> tuple[float, float] | None:
+    def convert_to_coordinates(region: str) -> tuple[float, float] | None:
         url = f"https://geocode.maps.co/search?q={region}&api_key={API_KEY}"
         response = requests.get(url)
 
@@ -36,3 +36,16 @@ class RegionHelper:
             result.append(option["display_name"])
 
         return result
+
+    @staticmethod
+    def convert_to_region(coordinates: tuple[float, float]) -> str | None:
+        lat, lon = coordinates
+        url = f"https://geocode.maps.co/reverse?lat={lat}&lon={lon}&api_key={API_KEY}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+
+            return data["display_name"]
+
+        return None
