@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { ForecastProvider } from "./contexts/ForecastContext";
 import DailyPage from "./pages/DailyPage";
 import GeneralPage from "./pages/GeneralPage";
 import DynamicsPage from "./pages/DynamicsPage";

@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router";
-import { useEffect, useRef } from "react";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "./SelectButton";
 
