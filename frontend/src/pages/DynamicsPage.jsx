@@ -1,6 +1,9 @@
 import { LineChart, XAxis, Line, ResponsiveContainer, YAxis } from "recharts";
 import { useEffect, useState } from "react";
 import { useForecastContext } from "../contexts/ForecastContext";
+import SelectButton from "../components/SelectButton";
+import generateServiceColor from "../utils/serviceColorGenerator";
+import useSyncCityParams from "../hooks/useSyncCityParams";
 
 const getMinMaxDates = (data) => {
   const dates = Object.keys(data);
@@ -16,6 +19,8 @@ const getIndicators = (data) => {
 };
 
 const DynamicsPage = () => {
+  useSyncCityParams();
+
   const [dailyPeriod, setDailyPeriod] = useState([null, null]);
   const [indicator, setIndicator] = useState(null);
 
@@ -57,28 +62,31 @@ const DynamicsPage = () => {
         <ResponsiveContainer width="75%" height={400}>
           <LineChart data={data}>
             <XAxis dataKey="time" />
-
             <YAxis label={{ value: indicator, angle: -90, dx: -20 }} />
-
             {Object.keys(data[0])
-              .filter((key) => key !== "time")
+              .filter((key) => key !== "time" && key !== "average")
               .map((key) => (
                 <Line
                   key={key}
                   type="monotone"
                   dataKey={key}
-                  stroke="#8884d8"
-                  activeDot={{ r: 8 }}
+                  stroke={`${generateServiceColor(key)}`}
                 />
               ))}
+
+            <Line type="monotone" dataKey="average" stroke="#4ade80" />
           </LineChart>
         </ResponsiveContainer>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col justify-center gap-2 -translate-y-5">
           {indicators.map((ind) => (
-            <button key={ind} onClick={() => setIndicator(ind)}>
+            <SelectButton
+              key={ind}
+              onClick={() => setIndicator(ind)}
+              selected={indicator === ind}
+            >
               {ind}
-            </button>
+            </SelectButton>
           ))}
         </div>
       </div>
