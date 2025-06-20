@@ -27,7 +27,9 @@ weather_API_classes = (WeatherAPI, OpenWeatherMapAPI)
 
 
 @app.get("/forecast")
-def get_weather_forecast(region: str, API_classes: List[str] = Query(None)) -> dict:
+async def get_weather_forecast(
+    region: str, API_classes: List[str] = Query(None)
+) -> dict:
     if not API_classes:
         raise HTTPException(400, "API classes must be provided")
 
@@ -40,23 +42,25 @@ def get_weather_forecast(region: str, API_classes: List[str] = Query(None)) -> d
     if not selected_API_classes:
         raise HTTPException(400, "No valid API classes provided")
 
-    return WeatherAggregator.get_aggregated_weather(region, selected_API_classes)
+    return await WeatherAggregator.get_aggregated_weather(region, selected_API_classes)
 
 
 @app.get("/partial_city_helper")
-def get_partial_city_helper(partial_city: str) -> dict:
-    options = RegionHelper.get_options(partial_city)
+async def get_partial_city_helper(partial_city: str) -> dict:
+    options = await RegionHelper.get_options(partial_city)
 
     return {"options": options}
 
+
 @app.get("/convert_coordinates")
-def convert_coordinates(lat: float, lon: float) -> dict:
-    region = RegionHelper.convert_to_region((lat, lon))
+async def convert_coordinates(lat: float, lon: float) -> dict:
+    region = await RegionHelper.convert_to_region((lat, lon))
 
     if region is None:
         raise HTTPException(404, "Coordinates do not correspond to a valid region")
 
     return {"region": region}
+
 
 @app.get("/api_classes")
 def get_api_classes() -> dict:

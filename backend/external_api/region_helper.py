@@ -1,4 +1,4 @@
-import requests
+import httpx
 import os
 
 
@@ -7,45 +7,51 @@ API_KEY = os.environ["GEOCODE_API_KEY"]
 
 class RegionHelper:
     @staticmethod
-    def convert_to_coordinates(region: str) -> tuple[float, float] | None:
+    async def convert_to_coordinates(region: str) -> tuple[float, float] | None:
         url = f"https://geocode.maps.co/search?q={region}&api_key={API_KEY}"
-        response = requests.get(url)
 
-        if response.status_code == 200:
-            data = response.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
 
-            if data:
-                lat = float(data[0]["lat"])
-                lon = float(data[0]["lon"])
+            if response.status_code == 200:
+                data = await response.json()
 
-                return (lat, lon)
+                if data:
+                    lat = float(data[0]["lat"])
+                    lon = float(data[0]["lon"])
+
+                    return (lat, lon)
 
     @staticmethod
-    def get_options(partial_city: str) -> list[str]:
+    async def get_options(partial_city: str) -> list[str]:
         url = f"https://geocode.maps.co/search?q={partial_city}&api_key={API_KEY}"
-        response = requests.get(url)
 
-        result = []
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
 
-        if response.status_code != 200:
+            result = []
+
+            if response.status_code != 200:
+                return result
+
+            data = await response.json()
+
+            for option in data:
+                result.append(option["display_name"])
+
             return result
 
-        data = response.json()
-
-        for option in data:
-            result.append(option["display_name"])
-
-        return result
-
     @staticmethod
-    def convert_to_region(coordinates: tuple[float, float]) -> str | None:
+    async def convert_to_region(coordinates: tuple[float, float]) -> str | None:
         lat, lon = coordinates
         url = f"https://geocode.maps.co/reverse?lat={lat}&lon={lon}&api_key={API_KEY}"
-        response = requests.get(url)
 
-        if response.status_code == 200:
-            data = response.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
 
-            return data["display_name"]
+            if response.status_code == 200:
+                data = await response.json()
 
-        return None
+                return data["display_name"]
+
+            return None

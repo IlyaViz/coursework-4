@@ -8,16 +8,16 @@ from ..external_api.region_helper import RegionHelper
 
 class WeatherAggregator:
     @classmethod
-    def get_aggregated_weather(
+    async def get_aggregated_weather(
         cls, region: str, API_classes: list[WeatherAPIBase]
     ) -> dict | None:
-        coordinates = RegionHelper.convert_to_coordinates(region)
+        coordinates = await RegionHelper.convert_to_coordinates(region)
 
         if coordinates is None:
             raise HTTPException(404, "Region doesn't exist")
 
         results = {
-            API_class.__name__: API_class.get_weather(coordinates)
+            API_class.__name__: await API_class.get_weather(coordinates)
             for API_class in API_classes
         }
 
@@ -27,7 +27,6 @@ class WeatherAggregator:
 
     @classmethod
     def _aggregate_weather(cls, data: dict) -> dict:
-        # return data
         result = {}
 
         template_API_result = data[list(data.keys())[0]]
