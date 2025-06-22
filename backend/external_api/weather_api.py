@@ -1,9 +1,9 @@
 import os
-import httpx
 from .weather_api_base import WeatherAPIBase
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
+from .async_client import async_client
 
 
 API_KEY = os.environ.get("WEATHER_API_KEY")
@@ -15,20 +15,19 @@ class WeatherAPI(WeatherAPIBase):
         lat, lon = coordinates
         url = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={lat},{lon}&days=14"
 
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
+        response = await async_client.get(url)
 
-            if response.status_code != 200:
-                return {}
+        if response.status_code != 200:
+            return {}
 
-            data = await response.json()
+        data = response.json()
 
-            result = {}
+        result = {}
 
-            result[rtke.DAILY] = cls._get_daily_data(data)
-            result[rtke.HOURLY] = cls._get_hourly_data(data)
+        result[rtke.DAILY] = cls._get_daily_data(data)
+        result[rtke.HOURLY] = cls._get_hourly_data(data)
 
-            return result
+        return result
 
     @classmethod
     def _get_daily_data(cls, data: dict) -> dict[str, dict]:
