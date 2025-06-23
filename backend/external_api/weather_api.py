@@ -25,25 +25,28 @@ class WeatherAPI(WeatherAPIBase):
         lat, lon = coordinates
         url = f"https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={lat},{lon}&days=14"
 
-        response = await async_client.get(url)
+        try:
+            response = await async_client.get(url)
 
-        if response.status_code != 200:
+            if response.status_code != 200:
+                return {}
+
+            data = response.json()
+
+            result = {}
+
+            result[rtke.DAILY] = cls._get_daily_data(data)
+            result[rtke.HOURLY] = cls._get_hourly_data(data)
+
+            await AsyncRedis.safe_set(
+                f"cache:weather_api:get_weather:{coordinates}",
+                json.dumps(result),
+                ex=WEATHER_API_CACHE_TIME,
+            )
+
+            return result
+        except:
             return {}
-
-        data = response.json()
-
-        result = {}
-
-        result[rtke.DAILY] = cls._get_daily_data(data)
-        result[rtke.HOURLY] = cls._get_hourly_data(data)
-
-        await AsyncRedis.safe_set(
-            f"cache:weather_api:get_weather:{coordinates}",
-            json.dumps(result),
-            ex=WEATHER_API_CACHE_TIME,
-        )
-
-        return result
 
     @classmethod
     def _get_daily_data(cls, data: dict) -> dict[str, dict]:

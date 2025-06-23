@@ -20,24 +20,27 @@ class RegionHelper:
 
         url = f"https://geocode.maps.co/search?q={region}&api_key={API_KEY}"
 
-        response = await async_client.get(url)
+        try:
+            response = await async_client.get(url)
 
-        if response.status_code == 200:
-            data = response.json()
+            if response.status_code == 200:
+                data = response.json()
 
-            if data:
-                lat = float(data[0]["lat"])
-                lon = float(data[0]["lon"])
+                if data:
+                    lat = float(data[0]["lat"])
+                    lon = float(data[0]["lon"])
 
-                coordinates = (lat, lon)
+                    coordinates = (lat, lon)
 
-                await AsyncRedis.safe_set(
-                    f"cache:region_helper:convert_to_coordinates:{region}",
-                    json.dumps(coordinates),
-                    ex=COORDINATES_CACHE_TIME,
-                )
+                    await AsyncRedis.safe_set(
+                        f"cache:region_helper:convert_to_coordinates:{region}",
+                        json.dumps(coordinates),
+                        ex=COORDINATES_CACHE_TIME,
+                    )
 
-                return (lat, lon)
+                    return (lat, lon)
+        except:
+            ...
 
     @staticmethod
     async def get_options(partial_city: str) -> list[str]:
@@ -50,25 +53,28 @@ class RegionHelper:
 
         url = f"https://geocode.maps.co/search?q={partial_city}&api_key={API_KEY}"
 
-        response = await async_client.get(url)
-
         result = []
 
-        if response.status_code != 200:
+        try:
+            response = await async_client.get(url)
+
+            if response.status_code != 200:
+                return result
+
+            data = response.json()
+
+            for option in data:
+                result.append(option["display_name"])
+
+            await AsyncRedis.safe_set(
+                f"cache:region_helper:get_options:{partial_city}",
+                json.dumps(result),
+                ex=PARTIAL_CITY_CACHE_TIME,
+            )
+
             return result
-
-        data = response.json()
-
-        for option in data:
-            result.append(option["display_name"])
-
-        await AsyncRedis.safe_set(
-            f"cache:region_helper:get_options:{partial_city}",
-            json.dumps(result),
-            ex=PARTIAL_CITY_CACHE_TIME,
-        )
-
-        return result
+        except:
+            return result
 
     @staticmethod
     async def convert_to_region(coordinates: tuple[float, float]) -> str | None:
@@ -82,15 +88,18 @@ class RegionHelper:
         lat, lon = coordinates
         url = f"https://geocode.maps.co/reverse?lat={lat}&lon={lon}&api_key={API_KEY}"
 
-        response = await async_client.get(url)
+        try:
+            response = await async_client.get(url)
 
-        if response.status_code == 200:
-            data = response.json()
+            if response.status_code == 200:
+                data = response.json()
 
-            await AsyncRedis.safe_set(
-                f"cache:region_helper:convert_to_region:{coordinates}",
-                json.dumps(data["display_name"]),
-                ex=COORDINATES_CACHE_TIME,
-            )
+                await AsyncRedis.safe_set(
+                    f"cache:region_helper:convert_to_region:{coordinates}",
+                    json.dumps(data["display_name"]),
+                    ex=COORDINATES_CACHE_TIME,
+                )
 
-            return data["display_name"]
+                return data["display_name"]
+        except:
+            ...
