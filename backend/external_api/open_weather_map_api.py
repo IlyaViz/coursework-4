@@ -6,8 +6,8 @@ from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
 from .weather_api_base import WeatherAPIBase
 from ..resources.async_client import async_client
-from ..resources.async_redis import async_redis
-from ..constants.cache import WEATHER_API_CACHE_TIME
+from ..resources.async_redis import AsyncRedis
+from ..constants.redis_cache import WEATHER_API_CACHE_TIME
 
 
 API_KEY = os.environ.get("OPEN_WEATHER_MAP_API_KEY")
@@ -16,7 +16,7 @@ API_KEY = os.environ.get("OPEN_WEATHER_MAP_API_KEY")
 class OpenWeatherMapAPI(WeatherAPIBase):
     @classmethod
     async def get_weather(cls, coordinates: tuple[float, float]) -> dict[rtke, dict]:
-        cached_data = await async_redis.get(
+        cached_data = await AsyncRedis.safe_get(
             f"cache:open_weather_map_api:get_weather:{coordinates}"
         )
 
@@ -38,7 +38,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
         result[rtke.DAILY] = cls._get_daily_data(data)
         result[rtke.HOURLY] = cls._get_hourly_data(data)
 
-        await async_redis.set(
+        await AsyncRedis.safe_set(
             f"cache:open_weather_map_api:get_weather:{coordinates}",
             json.dumps(result),
             ex=WEATHER_API_CACHE_TIME,

@@ -1,8 +1,8 @@
 import os
 import json
 from ..resources.async_client import async_client
-from ..resources.async_redis import async_redis
-from ..constants.cache import COORDINATES_CACHE_TIME, PARTIAL_CITY_CACHE_TIME
+from ..resources.async_redis import AsyncRedis
+from ..constants.redis_cache import COORDINATES_CACHE_TIME, PARTIAL_CITY_CACHE_TIME
 
 
 API_KEY = os.environ["GEOCODE_API_KEY"]
@@ -11,7 +11,7 @@ API_KEY = os.environ["GEOCODE_API_KEY"]
 class RegionHelper:
     @staticmethod
     async def convert_to_coordinates(region: str) -> tuple[float, float] | None:
-        cached_coordinates = await async_redis.get(
+        cached_coordinates = await AsyncRedis.safe_get(
             f"cache:region_helper:convert_to_coordinates:{region}"
         )
 
@@ -31,7 +31,7 @@ class RegionHelper:
 
                 coordinates = (lat, lon)
 
-                await async_redis.set(
+                await AsyncRedis.safe_set(
                     f"cache:region_helper:convert_to_coordinates:{region}",
                     json.dumps(coordinates),
                     ex=COORDINATES_CACHE_TIME,
@@ -41,7 +41,7 @@ class RegionHelper:
 
     @staticmethod
     async def get_options(partial_city: str) -> list[str]:
-        cached_options = await async_redis.get(
+        cached_options = await AsyncRedis.safe_get(
             f"cache:region_helper:get_options:{partial_city}"
         )
 
@@ -62,7 +62,7 @@ class RegionHelper:
         for option in data:
             result.append(option["display_name"])
 
-        await async_redis.set(
+        await AsyncRedis.safe_set(
             f"cache:region_helper:get_options:{partial_city}",
             json.dumps(result),
             ex=PARTIAL_CITY_CACHE_TIME,
@@ -72,7 +72,7 @@ class RegionHelper:
 
     @staticmethod
     async def convert_to_region(coordinates: tuple[float, float]) -> str | None:
-        cached_region = await async_redis.get(
+        cached_region = await AsyncRedis.safe_get(
             f"cache:region_helper:convert_to_region:{coordinates}"
         )
 
@@ -87,12 +87,10 @@ class RegionHelper:
         if response.status_code == 200:
             data = response.json()
 
-            await async_redis.set(
+            await AsyncRedis.safe_set(
                 f"cache:region_helper:convert_to_region:{coordinates}",
                 json.dumps(data["display_name"]),
                 ex=COORDINATES_CACHE_TIME,
             )
 
             return data["display_name"]
-
-        return None
