@@ -15,7 +15,7 @@ const ForecastProvider = ({ children }) => {
     data: APIClassesData,
     loading: loadingAPIClasses,
     error: errorAPIClasses,
-  } = useFetch(`${BACKEND_URL}/api_classes`);
+  } = useFetch(`${BACKEND_URL}/API_classes`);
 
   const forecastParams = new URLSearchParams();
 
@@ -42,7 +42,7 @@ const ForecastProvider = ({ children }) => {
 
   useEffect(() => {
     if (APIClassesData) {
-      const APIClasses = APIClassesData.api_classes;
+      const APIClasses = APIClassesData.API_classes;
 
       setAvailableAPIs(APIClasses);
       setUsedAPIs(APIClasses);

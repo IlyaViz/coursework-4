@@ -62,8 +62,8 @@ async def convert_coordinates(lat: float, lon: float) -> dict:
     return {"region": region}
 
 
-@app.get("/api_classes")
-def get_api_classes() -> dict:
-    api_classes = [cls.__name__ for cls in weather_API_classes]
+@app.get("/API_classes")
+def get_API_classes() -> dict:
+    API_classes = [cls.__name__ for cls in weather_API_classes]
 
-    return {"api_classes": api_classes}
+    return {"API_classes": API_classes}
