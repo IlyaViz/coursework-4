@@ -1,2 +1,0 @@
-MAX_DAYS = 5
-CACHE_TIME = 5 * 60

@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class ResultTypeKeyEnum(Enum):
-    DAILY = "daily",
+class ResultTypeKeyEnum(str, Enum):
+    DAILY = "daily"
     HOURLY = "hourly"

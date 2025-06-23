@@ -8,6 +8,8 @@ services:
       - /app/.venv
     ports:
       - "8000:8000"
+    depends_on:
+      - redis
 
   frontend:
     build:
@@ -20,3 +22,8 @@ services:
       - VITE_BACKEND_URL=http://localhost:8000
     ports:
       - "5173:5173"
+
+  redis:
+    image: redis:8.0-alpine
+    ports:
+      - "6379:6379"

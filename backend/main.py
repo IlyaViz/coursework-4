@@ -67,13 +67,3 @@ def get_api_classes() -> dict:
     api_classes = [cls.__name__ for cls in weather_API_classes]
 
     return {"api_classes": api_classes}
-
-@app.get("/wait")
-async def wait(seconds: int = 5) -> dict:
-    import asyncio
-    if seconds < 0:
-        raise HTTPException(400, "Seconds must be a non-negative integer")
-    
-    await asyncio.sleep(seconds)
-
-    return {"message": f"Waited for {seconds} seconds"}
