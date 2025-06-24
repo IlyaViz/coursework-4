@@ -62,7 +62,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
                 drke.MAX_TEMPERATURE: day["temp"]["max"],
                 drke.AVERAGE_HUMIDITY: day["humidity"],
                 drke.MAX_WIND: round(day["wind_speed"] * 3.6, 2),
-                drke.CONDITION: day["weather"][0]["main"],
+                drke.CONDITION_ICON: f"https://openweathermap.org/img/wn/{day['weather'][0]['icon']}@2x.png",
             }
 
         return result
@@ -80,7 +80,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
                 hrke.WIND: round(hour["wind_speed"] * 3.6, 2),
                 hrke.PRESSURE: hour["pressure"],
                 hrke.HUMIDITY: hour["humidity"],
-                hrke.CONDITION: hour["weather"][0]["main"],
+                hrke.CONDITION_ICON: f"https://openweathermap.org/img/wn/{hour['weather'][0]['icon']}@2x.png",
             }
 
         return result

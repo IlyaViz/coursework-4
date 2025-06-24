@@ -60,7 +60,7 @@ class WeatherAPI(WeatherAPIBase):
                 drke.MAX_TEMPERATURE: day["day"]["maxtemp_c"],
                 drke.AVERAGE_HUMIDITY: day["day"]["avghumidity"],
                 drke.MAX_WIND: day["day"]["maxwind_kph"],
-                drke.CONDITION: day["day"]["condition"]["text"],
+                drke.CONDITION_ICON: day["day"]["condition"]["icon"]
             }
 
         return result
@@ -78,7 +78,7 @@ class WeatherAPI(WeatherAPIBase):
                     hrke.WIND: hour["wind_kph"],
                     hrke.PRESSURE: hour["pressure_mb"],
                     hrke.HUMIDITY: hour["humidity"],
-                    hrke.CONDITION: hour["condition"]["text"],
+                    hrke.CONDITION_ICON: hour["condition"]["icon"]
                 }
 
         return result

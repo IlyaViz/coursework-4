@@ -34,7 +34,6 @@ const DynamicsPage = () => {
     }
   }, [forecast]);
 
-  
   if (loadingForecast) {
     return <h1 className="text-center">Loading...</h1>;
   }
@@ -69,6 +68,7 @@ const DynamicsPage = () => {
           <LineChart data={data}>
             <XAxis dataKey="time" />
             <YAxis label={{ value: indicator, angle: -90, dx: -20 }} />
+
             {Object.keys(data[0])
               .filter((key) => key !== "time" && key !== "average")
               .map((key) => (
@@ -85,15 +85,18 @@ const DynamicsPage = () => {
         </ResponsiveContainer>
 
         <div className="flex flex-col justify-center gap-2 -translate-y-5">
-          {indicators.map((ind) => (
-            <SelectButton
-              key={ind}
-              onClick={() => setIndicator(ind)}
-              selected={indicator === ind}
-            >
-              {ind}
-            </SelectButton>
-          ))}
+          {indicators.map(
+            (ind) =>
+              ind !== "condition icon" && (
+                <SelectButton
+                  key={ind}
+                  onClick={() => setIndicator(ind)}
+                  selected={indicator === ind}
+                >
+                  {ind}
+                </SelectButton>
+              )
+          )}
         </div>
       </div>
 

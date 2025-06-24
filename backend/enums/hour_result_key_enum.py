@@ -6,4 +6,4 @@ class HourResultKeyEnum(str, Enum):
     PRESSURE = "pressure"
     HUMIDITY = "humidity"
     WIND = "wind speed"
-    CONDITION = "condition"
+    CONDITION_ICON = "condition icon"

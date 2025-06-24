@@ -6,4 +6,4 @@ class DayResultKeyEnum(str, Enum):
     MAX_TEMPERATURE = "max temperature"
     MAX_WIND = "max wind speed"
     AVERAGE_HUMIDITY = "average humidity"
-    CONDITION = "condition"
+    CONDITION_ICON = "condition icon"
