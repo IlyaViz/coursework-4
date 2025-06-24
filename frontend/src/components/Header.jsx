@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from "react-router";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "./SelectButton";
+import generateServiceColor from "../utils/serviceColorGenerator";
 
 const Header = () => {
-  const { city, setUsedAPIs, availableAPIs, usedAPIs } = useForecastContext();
+  const { city, setUsedAPIs, availableAPIs, usedAPIs, forecast } =
+    useForecastContext();
 
   const navigate = useNavigate();
 
@@ -11,6 +13,14 @@ const Header = () => {
 
   const backable = location.pathname !== `/${city}`;
   const isDynamicsPage = location.pathname.includes("/dynamics");
+  let resultAPIs = [];
+
+  if (forecast) {
+    const firstDay = Object.keys(forecast)[0];
+    const firstIndicator = Object.keys(forecast[firstDay].indicators)[0];
+
+    resultAPIs = Object.keys(forecast[firstDay].indicators[firstIndicator]);
+  }
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -92,7 +102,16 @@ const Header = () => {
         )}
       </div>
 
-      <div>Services</div>
+      <div>
+        {resultAPIs.map(
+          (API) =>
+            API !== "average" && (
+              <h1 style={{ backgroundColor: generateServiceColor(API) }} className="p-1 text-center">
+                {API}
+              </h1>
+            )
+        )}
+      </div>
     </header>
   );
 };

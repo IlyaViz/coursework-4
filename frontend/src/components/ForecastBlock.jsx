@@ -3,7 +3,7 @@ import generateServiceColor from "../utils/serviceColorGenerator";
 
 const ForecastBlock = ({ forecast, onClickBaseLink }) => {
   return (
-    <div className="flex justify-around gap-4">
+    <div className="grid grid-cols-1 gap-y-5 xl:grid-cols-2 xl:mx-32 justify-items-center 2xl:grid-cols-3">
       {Object.entries(forecast).map(([time, data]) => (
         <ConditionalLink
           to={`/${onClickBaseLink}/${time}`}
@@ -30,14 +30,14 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
               </div>
             </div>
 
-            <div className="flex justify-center gap-2 m-1 bg-blue-300">
+            <div className="grid grid-cols-2 gap-2 justify-items-center sm:grid-cols-5">
               {Object.entries(data.indicators ? data.indicators : data).map(
                 ([indicator, services]) => (
                   <div
                     key={indicator}
                     className="flex flex-col items-center w-24"
                   >
-                    {indicator}
+                    <h1 className="text-center">{indicator}</h1>
 
                     {Object.entries(services).map(
                       ([service, temp]) =>
