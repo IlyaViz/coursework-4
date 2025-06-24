@@ -77,7 +77,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
 
             result[time] = {
                 hrke.TEMPERATURE: hour["temp"],
-                hrke.WIND: hour["wind_speed"] * 3.6,
+                hrke.WIND: round(hour["wind_speed"] * 3.6, 2),
                 hrke.PRESSURE: hour["pressure"],
                 hrke.HUMIDITY: hour["humidity"],
                 hrke.CONDITION: hour["weather"][0]["main"],
