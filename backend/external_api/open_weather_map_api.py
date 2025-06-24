@@ -61,7 +61,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
                 drke.MIN_TEMPERATURE: day["temp"]["min"],
                 drke.MAX_TEMPERATURE: day["temp"]["max"],
                 drke.AVERAGE_HUMIDITY: day["humidity"],
-                drke.MAX_WIND: day["wind_speed"],
+                drke.MAX_WIND: day["wind_speed"] * 3.6,
                 drke.CONDITION: day["weather"][0]["main"],
             }
 
@@ -77,7 +77,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
 
             result[time] = {
                 hrke.TEMPERATURE: hour["temp"],
-                hrke.WIND: hour["wind_speed"],
+                hrke.WIND: hour["wind_speed"] * 3.6,
                 hrke.PRESSURE: hour["pressure"],
                 hrke.HUMIDITY: hour["humidity"],
                 hrke.CONDITION: hour["weather"][0]["main"],
