@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+
+  redis:
+    image: redis:8.0-alpine
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile.prod
+      args:
+        VITE_BACKEND_URL: http://localhost/backend
+    ports:
+      - "80:80"

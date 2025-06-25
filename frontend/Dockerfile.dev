@@ -1,8 +1,7 @@
-# No optional dependency error
 FROM node:20-slim
 
 WORKDIR /app
 COPY . .
-RUN npm install --verbose
+RUN npm install
 
 CMD ["npm", "run", "dev", "--", "--host"]
