@@ -21,15 +21,17 @@ class AsyncRedis:
                 await cls.__redis.ping()
 
                 cls.__connection_is_active = True
-            except:
-                ...
+            except Exception as e:
+                print(f"Redis connection error: {e}")
 
     @classmethod
     async def safe_set(cls, key: str, value: str, ex: int) -> None:
         if cls.__connection_is_active:
             try:
                 await cls.__redis.set(key, value, ex=ex)
-            except:
+            except Exception as e:
+                print(f"Error setting key in Redis: {e}")
+
                 await cls.__try_reconnect()
         else:
             await cls.__try_reconnect()
@@ -39,7 +41,9 @@ class AsyncRedis:
         if cls.__connection_is_active:
             try:
                 return await cls.__redis.get(key)
-            except:
+            except Exception as e:
+                print(f"Error getting key from Redis: {e}")
+
                 await cls.__try_reconnect()
         else:
             await cls.__try_reconnect()

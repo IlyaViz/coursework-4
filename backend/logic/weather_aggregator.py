@@ -44,9 +44,10 @@ class WeatherAggregator:
                 result[day]["indicators"][key] = {}
 
                 for API_class in data:
-                    value = data[API_class][rtke.DAILY][day][key]
+                    value = data[API_class][rtke.DAILY][day].get(key, None)
 
-                    result[day]["indicators"][key][API_class] = value
+                    if value is not None:
+                        result[day]["indicators"][key][API_class] = value
 
                 if (
                     not isinstance(value, str)
@@ -77,9 +78,10 @@ class WeatherAggregator:
                     result[day]["hours"][hour][key] = {}
 
                     for API_class in data:
-                        value = data[API_class][rtke.HOURLY][time][key]
+                        value = data[API_class][rtke.HOURLY][time].get(key, None)
 
-                        result[day]["hours"][hour][key][API_class] = value
+                        if value is not None:
+                            result[day]["hours"][hour][key][API_class] = value
 
                     if (
                         not isinstance(value, str)

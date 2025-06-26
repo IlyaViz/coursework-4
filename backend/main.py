@@ -9,6 +9,7 @@ load_dotenv()
 
 from .external_api.weather_api import WeatherAPI
 from .external_api.open_weather_map_api import OpenWeatherMapAPI
+from .external_api.open_meteo_api import OpenMeteoAPI
 from .logic.weather_aggregator import WeatherAggregator
 from .external_api.region_helper import RegionHelper
 
@@ -23,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-weather_API_classes = (WeatherAPI, OpenWeatherMapAPI)
+weather_API_classes = (WeatherAPI, OpenWeatherMapAPI, OpenMeteoAPI)
 
 
 @app.get("/forecast")

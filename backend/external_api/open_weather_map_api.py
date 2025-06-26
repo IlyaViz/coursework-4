@@ -46,7 +46,9 @@ class OpenWeatherMapAPI(WeatherAPIBase):
             )
 
             return result
-        except:
+        except Exception as e:
+            print(f"Error fetching weather data from OpenWeatherMap: {e}")
+
             return {}
 
     @classmethod
@@ -54,14 +56,14 @@ class OpenWeatherMapAPI(WeatherAPIBase):
         result = {}
 
         for day in data["daily"]:
-            dt = day["dt"]
+            dt = day["dt"] + data["timezone_offset"]
             date = datetime.fromtimestamp(dt).strftime("%Y-%m-%d")
 
             result[date] = {
                 drke.MIN_TEMPERATURE: day["temp"]["min"],
                 drke.MAX_TEMPERATURE: day["temp"]["max"],
-                drke.AVERAGE_HUMIDITY: day["humidity"],
-                drke.MAX_WIND: round(day["wind_speed"] * 3.6, 2),
+                drke.HUMIDITY: day["humidity"],
+                drke.WIND: round(day["wind_speed"] * 3.6, 2),
                 drke.CONDITION_ICON: f"https://openweathermap.org/img/wn/{day['weather'][0]['icon']}@2x.png",
             }
 
@@ -72,7 +74,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
         result = {}
 
         for hour in data["hourly"]:
-            dt = hour["dt"]
+            dt = hour["dt"] + data["timezone_offset"]
             time = datetime.fromtimestamp(dt).strftime("%Y-%m-%d %H:00")
 
             result[time] = {

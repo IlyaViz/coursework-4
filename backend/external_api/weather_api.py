@@ -45,7 +45,9 @@ class WeatherAPI(WeatherAPIBase):
             )
 
             return result
-        except:
+        except Exception as e:
+            print(f"Error fetching weather data from WeatherAPI: {e}")
+
             return {}
 
     @classmethod
@@ -58,9 +60,9 @@ class WeatherAPI(WeatherAPIBase):
             result[date] = {
                 drke.MIN_TEMPERATURE: day["day"]["mintemp_c"],
                 drke.MAX_TEMPERATURE: day["day"]["maxtemp_c"],
-                drke.AVERAGE_HUMIDITY: day["day"]["avghumidity"],
-                drke.MAX_WIND: day["day"]["maxwind_kph"],
-                drke.CONDITION_ICON: day["day"]["condition"]["icon"]
+                drke.HUMIDITY: day["day"]["avghumidity"],
+                drke.WIND: day["day"]["maxwind_kph"],
+                drke.CONDITION_ICON: day["day"]["condition"]["icon"],
             }
 
         return result
@@ -78,7 +80,7 @@ class WeatherAPI(WeatherAPIBase):
                     hrke.WIND: hour["wind_kph"],
                     hrke.PRESSURE: hour["pressure_mb"],
                     hrke.HUMIDITY: hour["humidity"],
-                    hrke.CONDITION_ICON: hour["condition"]["icon"]
+                    hrke.CONDITION_ICON: hour["condition"]["icon"],
                 }
 
         return result

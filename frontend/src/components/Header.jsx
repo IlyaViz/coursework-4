@@ -17,9 +17,15 @@ const Header = () => {
 
   if (forecast) {
     const firstDay = Object.keys(forecast)[0];
-    const firstIndicator = Object.keys(forecast[firstDay].indicators)[0];
+    const indicators = forecast[firstDay].indicators;
 
-    resultAPIs = Object.keys(forecast[firstDay].indicators[firstIndicator]);
+    Object.values(indicators).forEach((APIGroup) => {
+      Object.keys(APIGroup).forEach((API) => {
+        if (!resultAPIs.includes(API)) {
+          resultAPIs.push(API);
+        }
+      });
+    });
   }
 
   const handleKeyDown = (e) => {
@@ -106,7 +112,10 @@ const Header = () => {
         {resultAPIs.map(
           (API) =>
             API !== "average" && (
-              <h1 style={{ backgroundColor: generateServiceColor(API) }} className="p-1 text-center">
+              <h1
+                style={{ backgroundColor: generateServiceColor(API) }}
+                className="p-1 text-center"
+              >
                 {API}
               </h1>
             )

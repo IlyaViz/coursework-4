@@ -39,8 +39,8 @@ class RegionHelper:
                     )
 
                     return (lat, lon)
-        except:
-            ...
+        except Exception as e:
+            print(f"Error fetching coordinates for region '{region}': {e}")
 
     @staticmethod
     async def get_options(partial_city: str) -> list[str]:
@@ -73,7 +73,9 @@ class RegionHelper:
             )
 
             return result
-        except:
+        except Exception as e:
+            print(f"Error fetching options for partial city '{partial_city}': {e}")
+
             return result
 
     @staticmethod
@@ -102,4 +104,4 @@ class RegionHelper:
 
                 return data["display_name"]
         except:
-            ...
+            print(f"Error fetching region for coordinates '{coordinates}'")
