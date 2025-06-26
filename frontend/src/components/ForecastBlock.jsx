@@ -33,7 +33,7 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
                       key={indicator}
                       className="flex flex-col items-center w-24"
                     >
-                      <h1 className="text-center">{indicator}</h1>
+                      <h1 className="h-full text-center">{indicator}</h1>
 
                       {Object.entries(services).map(
                         ([service, value]) =>
