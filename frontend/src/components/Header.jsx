@@ -4,18 +4,20 @@ import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "./SelectButton";
 import generateServiceColor from "../utils/serviceColorGenerator";
 import useFetch from "../hooks/useFetch";
+import useDebounce from "../hooks/useDebounce";
 
 const Header = () => {
   const [partialCity, setPartialCity] = useState("");
 
-  const shouldFetchPartialCity = partialCity.trim();
+  const debouncedPartialCity = useDebounce(partialCity.trim());
+  const shouldFetchPartialCity = debouncedPartialCity.trim();
 
   const {
     data: optionsData,
     loading: loadingCityOptions,
     error: errorCityOptions,
   } = useFetch(
-    `partial_city_helper?partial_city=${partialCity}`,
+    `partial_city_helper?partial_city=${debouncedPartialCity}`,
     shouldFetchPartialCity
   );
 
