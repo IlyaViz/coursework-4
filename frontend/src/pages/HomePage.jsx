@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import useFetch from "../hooks/useFetch";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
 const HomePage = () => {
   const [URL, setURL] = useState("");
 
@@ -23,7 +21,7 @@ const HomePage = () => {
         const { latitude, longitude } = position.coords;
 
         setURL(
-          `${BACKEND_URL}/convert_coordinates?lat=${latitude}&lon=${longitude}`
+          `convert_coordinates?lat=${latitude}&lon=${longitude}`
         );
       });
     }

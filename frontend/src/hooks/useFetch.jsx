@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const useFetch = (url, shouldFetch = true) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -12,7 +14,7 @@ const useFetch = (url, shouldFetch = true) => {
       setData(null);
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(`${BACKEND_URL}/${url}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

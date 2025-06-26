@@ -1,9 +1,24 @@
 import { useLocation, useNavigate } from "react-router";
+import { useState } from "react";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "./SelectButton";
 import generateServiceColor from "../utils/serviceColorGenerator";
+import useFetch from "../hooks/useFetch";
 
 const Header = () => {
+  const [partialCity, setPartialCity] = useState("");
+
+  const shouldFetchPartialCity = partialCity.trim();
+
+  const {
+    data: optionsData,
+    loading: loadingCityOptions,
+    error: errorCityOptions,
+  } = useFetch(
+    `partial_city_helper?partial_city=${partialCity}`,
+    shouldFetchPartialCity
+  );
+
   const { city, setUsedAPIs, availableAPIs, usedAPIs, forecast } =
     useForecastContext();
 
@@ -28,12 +43,10 @@ const Header = () => {
     });
   }
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      if (!e.target.value.trim()) return;
+  const onOptionClick = (option) => {
+    setPartialCity("");
 
-      navigate(`/${e.target.value}`);
-    }
+    navigate(`/${option}`);
   };
 
   const OnAPIButtonClicked = (e) => {
@@ -51,15 +64,25 @@ const Header = () => {
       </div>
 
       <div className="flex flex-col items-center">
-        <div>
-          <input
-            className="p-0.5 border border-black rounded-lg"
-            type="text"
-            onKeyUp={handleKeyDown}
-            placeholder="City name"
-          />
+        <input
+          className="p-0.5 border border-black rounded-lg"
+          type="text"
+          placeholder="City name"
+          onChange={(e) => setPartialCity(e.target.value)}
+          value={partialCity}
+        />
 
-          <div className="hidden">Options</div>
+        <div className="flex flex-col gap-1 mt-1 text-center">
+          {loadingCityOptions && <div>Loading...</div>}
+
+          {errorCityOptions && <div>Error: {errorCityOptions}</div>}
+
+          {partialCity.trim() &&
+            optionsData?.options.map((option) => (
+              <SelectButton key={option} onClick={() => onOptionClick(option)}>
+                {option}
+              </SelectButton>
+            ))}
         </div>
 
         <div className="flex flex-col gap-2 mt-3">
@@ -113,6 +136,7 @@ const Header = () => {
           (API) =>
             API !== "average" && (
               <h1
+                key={API}
                 style={{ backgroundColor: generateServiceColor(API) }}
                 className="p-1 text-center"
               >

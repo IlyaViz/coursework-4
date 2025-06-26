@@ -1,8 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
 const ForecastContext = createContext();
 
 const ForecastProvider = ({ children }) => {
@@ -11,12 +9,6 @@ const ForecastProvider = ({ children }) => {
   const [usedAPIs, setUsedAPIs] = useState([]);
   const [forecast, setForecast] = useState(null);
 
-  const {
-    data: APIClassesData,
-    loading: loadingAPIClasses,
-    error: errorAPIClasses,
-  } = useFetch(`${BACKEND_URL}/API_classes`);
-
   const forecastParams = new URLSearchParams();
 
   forecastParams.append("region", city);
@@ -24,15 +16,21 @@ const ForecastProvider = ({ children }) => {
     forecastParams.append("API_classes", API);
   });
 
-  const forecastURL = `${BACKEND_URL}/forecast?${forecastParams.toString()}`;
+  const forecastURL = `forecast?${forecastParams.toString()}`;
 
-  const shouldFetchForecast = city && usedAPIs.length > 0;
+  const shouldFetchForecast = city.trim() && usedAPIs.length > 0;
 
   const {
     data: forecastData,
     loading: loadingForecast,
     error: errorForecast,
   } = useFetch(forecastURL, shouldFetchForecast);
+
+  const {
+    data: APIClassesData,
+    loading: loadingAPIClasses,
+    error: errorAPIClasses,
+  } = useFetch(`API_classes`);
 
   useEffect(() => {
     if (forecastData) {
