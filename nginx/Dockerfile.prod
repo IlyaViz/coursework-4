@@ -12,6 +12,8 @@ RUN npm run build
 FROM nginx:1.28
 
 COPY --from=0 /app/dist /usr/share/nginx/html
-COPY /nginx/nginx.conf /etc/nginx/nginx.conf
+COPY /nginx/nginx.conf.template /etc/nginx/nginx.conf.template
+
+RUN envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 CMD ["nginx", "-g", "daemon off;"]
