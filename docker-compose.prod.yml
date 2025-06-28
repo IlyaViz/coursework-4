@@ -13,5 +13,18 @@ services:
       dockerfile: nginx/Dockerfile.prod
       args:
         VITE_BACKEND_URL: https://localhost/backend
+    volumes:
+      - certbot:/etc/nginx/certs
     ports:
       - "443:443"
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot:/etc/letsencrypt/live/ilyaviz.ddns.net
+    entrypoint: "certbot certonly --standalone --non-interactive --agree-tos -d ilyaviz.ddns.net" # Change domain
+    ports:
+      - "80:80"
+
+volumes:
+  certbot:
