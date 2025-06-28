@@ -54,7 +54,6 @@ class WeatherAggregator:
 
                 if (
                     not isinstance(value, str)
-                    and len(result[day]["indicators"][key]) > 1
                 ):
                     result[day]["indicators"][key]["average"] = round(
                         sum(result[day]["indicators"][key].values())
