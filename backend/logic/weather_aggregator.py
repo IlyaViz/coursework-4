@@ -16,10 +16,13 @@ class WeatherAggregator:
         if coordinates is None:
             raise HTTPException(404, "Region doesn't exist")
 
-        results = {
-            API_class.__name__: await API_class.get_weather(coordinates)
-            for API_class in API_classes
-        }
+        results = {}
+
+        for API_class in API_classes:
+            result = await API_class.get_weather(coordinates)
+
+            if result:
+                results[API_class.__name__] = result
 
         aggregated_result = cls._aggregate_weather(results)
 

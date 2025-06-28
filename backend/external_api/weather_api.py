@@ -14,7 +14,7 @@ API_KEY = os.environ.get("WEATHER_API_KEY")
 
 class WeatherAPI(WeatherAPIBase):
     @classmethod
-    async def get_weather(cls, coordinates: tuple[float, float]) -> dict[rtke, dict]:
+    async def get_weather(cls, coordinates: tuple[float, float]) -> dict:
         cached_data = await AsyncRedis.safe_get(
             f"cache:weather_api:get_weather:{coordinates}"
         )

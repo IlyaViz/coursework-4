@@ -11,7 +11,7 @@ from ..constants.wmo_code_to_icon import WMO_TO_WEATHER_ICON
 
 class OpenMeteoAPI(WeatherAPIBase):
     @classmethod
-    async def get_weather(cls, coordinates: tuple[float, float]) -> dict[rtke, dict]:
+    async def get_weather(cls, coordinates: tuple[float, float]) -> dict:
         cached_data = await AsyncRedis.safe_get(
             f"cache:open_meteo_api:get_weather:{coordinates}"
         )

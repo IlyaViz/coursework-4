@@ -5,7 +5,7 @@ from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
 class WeatherAPIBase(ABC):
     @classmethod
     @abstractmethod
-    async def get_weather(cls, coordinates: tuple[float, float]) -> dict[rtke, dict]:
+    async def get_weather(cls, coordinates: tuple[float, float]) -> dict:
         pass
 
     @classmethod
