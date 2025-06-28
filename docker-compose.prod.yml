@@ -12,6 +12,6 @@ services:
       context: .
       dockerfile: nginx/Dockerfile.prod
       args:
-        VITE_BACKEND_URL: http://localhost/backend
+        VITE_BACKEND_URL: https://localhost/backend
     ports:
-      - "80:80"
+      - "443:443"
