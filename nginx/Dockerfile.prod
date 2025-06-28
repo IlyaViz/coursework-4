@@ -17,6 +17,6 @@ COPY /nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 ARG DOMAIN
 ENV DOMAIN=$DOMAIN
 
-RUN envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+RUN envsubst '${DOMAIN}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 CMD ["nginx", "-g", "daemon off;"]
