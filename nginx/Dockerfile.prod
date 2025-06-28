@@ -14,6 +14,9 @@ FROM nginx:1.28
 COPY --from=0 /app/dist /usr/share/nginx/html
 COPY /nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 
+ARG DOMAIN
+ENV DOMAIN=$DOMAIN
+
 RUN envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 CMD ["nginx", "-g", "daemon off;"]
