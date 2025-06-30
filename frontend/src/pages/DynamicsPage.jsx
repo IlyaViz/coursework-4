@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "../components/SelectButton";
 import generateServiceColor from "../utils/serviceColorGenerator";
+import INDICATOR_TO_ICON_CONSTANTS from "../constants/indicatorToIconConstants";
+import UNITS from "../constants/units";
 
 const getMinMaxDates = (data) => {
   const dates = Object.keys(data);
@@ -67,7 +69,11 @@ const DynamicsPage = () => {
         <ResponsiveContainer width="75%" height={400}>
           <LineChart data={data}>
             <XAxis dataKey="time" />
-            <YAxis label={{ value: indicator, angle: -90, dx: -20 }} />
+            <YAxis
+              label={{ value: `${UNITS[indicator]}`, angle: -90, dx: -25 }}
+              domain={["dataMin - 2", "dataMax + 2"]}
+              tickFormatter={(value) => Math.round(value)}
+            />
 
             {Object.keys(data[0])
               .filter((key) => key !== "time" && key !== "average")
@@ -84,7 +90,7 @@ const DynamicsPage = () => {
           </LineChart>
         </ResponsiveContainer>
 
-        <div className="flex flex-col justify-center gap-2 -translate-y-5">
+        <div className="flex flex-col justify-center gap-2 ml-4 -translate-y-5">
           {indicators.map(
             (ind) =>
               ind !== "condition icon" && (
@@ -93,7 +99,7 @@ const DynamicsPage = () => {
                   onClick={() => setIndicator(ind)}
                   selected={indicator === ind}
                 >
-                  {ind}
+                  {INDICATOR_TO_ICON_CONSTANTS[ind]}
                 </SelectButton>
               )
           )}

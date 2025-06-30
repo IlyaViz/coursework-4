@@ -1,5 +1,7 @@
 import ConditionalLink from "./ConditionalLink";
 import generateServiceColor from "../utils/serviceColorGenerator";
+import INDICATOR_TO_ICON_CONSTANTS from "../constants/indicatorToIconConstants";
+import UNITS from "../constants/units";
 
 const ForecastBlock = ({ forecast, onClickBaseLink }) => {
   return (
@@ -14,16 +16,23 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
             <div className="flex items-center justify-between">
               <h1 className="w-full text-4xl text-center text-white">{time}</h1>
 
-              <div className="flex flex-col m-1">
+              <div className="flex flex-col">
                 {Object.entries(
                   data.indicators
                     ? data.indicators["condition icon"]
                     : data["condition icon"]
                 ).map(([service, icon]) => (
-                  <img src={icon} key={service} style={{backgroundColor: generateServiceColor(service)}}/>
+                  <img
+                    src={icon}
+                    key={service}
+                    style={{ backgroundColor: generateServiceColor(service) }}
+                    className="m-1 rounded-2xl"
+                  />
                 ))}
               </div>
             </div>
+
+            <hr className="my-1 border-blue-200" />
 
             <div className="grid grid-cols-2 gap-2 justify-items-center sm:grid-cols-4">
               {Object.entries(data.indicators ? data.indicators : data).map(
@@ -33,7 +42,9 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
                       key={indicator}
                       className="flex flex-col items-center w-24"
                     >
-                      <h1 className="h-full text-center">{indicator}</h1>
+                      <h1 className="h-full m-1 text-2xl text-center">
+                        {INDICATOR_TO_ICON_CONSTANTS[indicator]}
+                      </h1>
 
                       {Object.entries(services).map(
                         ([service, value]) =>
@@ -45,13 +56,15 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
                               }}
                               className="w-full text-center rounded-lg"
                             >
-                              <p>{value}</p>
+                              <p>
+                                {value} {UNITS[indicator]}
+                              </p>
                             </div>
                           )
                       )}
 
                       <p className="w-full mt-2 mb-1 text-center bg-green-400">
-                        {services.average}
+                        {services.average} {UNITS[indicator]}
                       </p>
                     </div>
                   )

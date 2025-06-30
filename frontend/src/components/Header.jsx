@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import { useForecastContext } from "../contexts/ForecastContext";
 import SelectButton from "./SelectButton";
@@ -28,7 +28,9 @@ const Header = () => {
 
   const location = useLocation();
 
-  const backable = location.pathname !== `/${city}`;
+  const { date } = useParams();
+
+  const isDayOpened = !!date;
   const isDynamicsPage = location.pathname.includes("/dynamics");
   let resultAPIs = [];
 
@@ -60,14 +62,20 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-around mt-5 mb-14">
+    <header className="flex justify-around gap-4 mt-5 mb-1">
       <div>
-        {backable && <button onClick={() => navigate(-1)}>Go back</button>}
+        {isDayOpened && (
+          <SelectButton onClick={() => navigate(`/${city}`)}>
+            <h1 className="w-12 text-xs sm:w-28 sm:text-sm lg:text-lg lg:w-32">
+              Back to daily forecast
+            </h1>
+          </SelectButton>
+        )}
       </div>
 
       <div className="flex flex-col items-center">
         <input
-          className="p-0.5 border border-black rounded-lg"
+          className="p-0.5 border border-black rounded-lg w-2/3 sm:w-auto"
           type="text"
           placeholder="City name"
           onChange={(e) => setPartialCity(e.target.value)}
@@ -94,11 +102,11 @@ const Header = () => {
                 <input
                   type="checkbox"
                   id={API}
-                  className="scale-150"
+                  className="scale-125 sm:scale-150"
                   checked={usedAPIs.includes(API)}
                   onChange={OnAPIButtonClicked}
                 />
-                <label htmlFor={API} className="m-2">
+                <label htmlFor={API} className="m-2 text-xs sm:text-lg">
                   {API}
                 </label>
               </div>
@@ -110,7 +118,7 @@ const Header = () => {
 
         {city.trim() && (
           <div>
-            <h1 className="mt-5 text-2xl">
+            <h1 className="mt-5 text-2xl text-center">
               Weather for <span className="font-bold">{city}</span>
             </h1>
 
@@ -140,7 +148,7 @@ const Header = () => {
               <h1
                 key={API}
                 style={{ backgroundColor: generateServiceColor(API) }}
-                className="p-1 text-center"
+                className="w-20 p-1 mt-1 overflow-scroll text-xs text-center rounded-2xl no-scrollbar sm:text-sm sm:w-auto lg:text-lg"
               >
                 {API}
               </h1>
