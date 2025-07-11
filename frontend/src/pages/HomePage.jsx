@@ -20,9 +20,7 @@ const HomePage = () => {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
 
-        setURL(
-          `convert_coordinates?lat=${latitude}&lon=${longitude}`
-        );
+        setURL(`convert_coordinates?lat=${latitude}&lon=${longitude}`);
       });
     }
   }, []);

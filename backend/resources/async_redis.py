@@ -12,11 +12,18 @@ class AsyncRedis:
     async def __try_reconnect(cls) -> None:
         cls.__connection_is_active = False
 
-        if time.time() - cls.__last_connection_attempt > REDIS_RECONNECTION_ATEMPT_TIMEOUT:
+        if (
+            time.time() - cls.__last_connection_attempt
+            > REDIS_RECONNECTION_ATEMPT_TIMEOUT
+        ):
             cls.__last_connection_attempt = time.time()
 
             try:
-                cls.__redis = aioredis.Redis(host="redis", socket_connect_timeout=REDIS_TIMEOUT, socket_timeout=REDIS_TIMEOUT)
+                cls.__redis = aioredis.Redis(
+                    host="redis",
+                    socket_connect_timeout=REDIS_TIMEOUT,
+                    socket_timeout=REDIS_TIMEOUT,
+                )
 
                 await cls.__redis.ping()
 
@@ -47,6 +54,3 @@ class AsyncRedis:
                 await cls.__try_reconnect()
         else:
             await cls.__try_reconnect()
-
-    
-        

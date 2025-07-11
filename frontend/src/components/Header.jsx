@@ -56,14 +56,14 @@ const Header = () => {
   const OnAPIButtonClicked = (e) => {
     if (e.target.checked) {
       setUsedAPIs((prev) => [...prev, e.target.id]);
-    } else {
+    } else if (usedAPIs.length > 1) {
       setUsedAPIs((prev) => prev.filter((API) => API !== e.target.id));
     }
   };
 
   return (
-    <header className="flex justify-around gap-4 mt-5 mb-1">
-      <div>
+    <header className="flex justify-around gap-2 mt-5 mb-12">
+      <div className="flex-1">
         {isDayOpened && (
           <SelectButton onClick={() => navigate(`/${city}`)}>
             <h1 className="w-12 text-xs sm:w-28 sm:text-sm lg:text-lg lg:w-32">
@@ -73,7 +73,7 @@ const Header = () => {
         )}
       </div>
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center flex-[4]">
         <input
           className="p-0.5 border border-black rounded-lg w-2/3 sm:w-auto"
           type="text"
@@ -88,7 +88,7 @@ const Header = () => {
           {errorCityOptions && <div>Error: {errorCityOptions}</div>}
 
           {partialCity.trim() &&
-            optionsData?.options.map((option) => (
+            [...new Set(optionsData?.options)].map((option) => (
               <SelectButton key={option} onClick={() => onOptionClick(option)}>
                 {option}
               </SelectButton>
@@ -141,7 +141,7 @@ const Header = () => {
         )}
       </div>
 
-      <div>
+      <div className="flex-1">
         {resultAPIs.map(
           (API) =>
             API !== "average" && (

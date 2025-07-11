@@ -52,9 +52,9 @@ class WeatherAggregator:
                     if value is not None:
                         result[day]["indicators"][key][API_class] = value
 
-                if (
-                    not isinstance(value, str)
-                ):
+                if len(result[day]["indicators"][key]) == 0:
+                    del result[day]["indicators"][key]
+                elif not isinstance(value, str):
                     result[day]["indicators"][key]["average"] = round(
                         sum(result[day]["indicators"][key].values())
                         / len(result[day]["indicators"][key]),

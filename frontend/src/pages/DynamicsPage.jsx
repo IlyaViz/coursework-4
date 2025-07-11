@@ -90,7 +90,7 @@ const DynamicsPage = () => {
           </LineChart>
         </ResponsiveContainer>
 
-        <div className="flex flex-col justify-center gap-2 ml-4 -translate-y-5">
+        <div className="flex flex-col justify-center gap-2 ml-4 text-2xl -translate-y-5">
           {indicators.map(
             (ind) =>
               ind !== "condition icon" && (

@@ -17,8 +17,6 @@ const GeneralPage = () => {
     return <h1 className="text-center">Processing...</h1>;
   }
 
-  console.log(forecast, loadingForecast, errorForecast);
-
   return <ForecastBlock forecast={forecast} onClickBaseLink={city} />;
 };
 

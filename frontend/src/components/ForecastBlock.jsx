@@ -34,15 +34,16 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
 
             <hr className="my-1 border-blue-200" />
 
-            <div className="grid grid-cols-2 gap-2 justify-items-center sm:grid-cols-4">
+            <div
+              className={`grid grid-cols-2 gap-2 justify-items-center sm:grid-cols-${
+                Object.keys(data.indicators ? data.indicators : data).length - 1
+              }`}
+            >
               {Object.entries(data.indicators ? data.indicators : data).map(
                 ([indicator, services]) =>
                   indicator !== "condition icon" && (
-                    <div
-                      key={indicator}
-                      className="flex flex-col items-center w-24"
-                    >
-                      <h1 className="h-full m-1 text-2xl text-center">
+                    <div key={indicator} className="flex flex-col w-24">
+                      <h1 className="m-1 text-2xl text-center">
                         {INDICATOR_TO_ICON_CONSTANTS[indicator]}
                       </h1>
 
