@@ -36,7 +36,7 @@ class OpenMeteoAPI(WeatherAPIBase):
             result[rtke.HOURLY] = cls._get_hourly_data(data)
 
             await AsyncRedis.safe_set(
-                f"cache:open_weather_map_api:get_weather:{coordinates}",
+                f"cache:open_meteo_api:get_weather:{coordinates}",
                 json.dumps(result),
                 ex=WEATHER_API_CACHE_TIME,
             )

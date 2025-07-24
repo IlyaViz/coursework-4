@@ -1,6 +1,6 @@
 # Getting Started
 
-* Git clone https://github.com/IlyaViz/coursework-5
+* Git clone https://github.com/IlyaViz/coursework-4
 
 * Create .env in /backend with variables OPEN_WEATHER_MAP_API_KEY, WEATHER_API_KEY, GEOCODE_API_KEY set
 
