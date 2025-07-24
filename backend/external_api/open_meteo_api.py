@@ -48,7 +48,7 @@ class OpenMeteoAPI(WeatherAPIBase):
             return {}
 
     @classmethod
-    def _get_daily_data(cls, data: dict) -> dict[str, dict]:
+    def _get_daily_data(cls, data: dict) -> dict:
         result = {}
 
         for day_index, day in enumerate(data["daily"]["time"]):
@@ -62,7 +62,7 @@ class OpenMeteoAPI(WeatherAPIBase):
         return result
 
     @classmethod
-    def _get_hourly_data(cls, data: dict) -> dict[str, dict]:
+    def _get_hourly_data(cls, data: dict) -> dict:
         result = {}
 
         for time_index, dt in enumerate(data["hourly"]["time"]):
@@ -80,7 +80,7 @@ class OpenMeteoAPI(WeatherAPIBase):
         return result
 
     @classmethod
-    def _get_weather_icon(cls, data, day, time=None):
+    def _get_weather_icon(cls, data: dict, day: str, time: str = None) -> str:
         day_index = data["daily"]["time"].index(day)
 
         if time is None:

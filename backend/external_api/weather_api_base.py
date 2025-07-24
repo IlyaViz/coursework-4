@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
 
 
 class WeatherAPIBase(ABC):
@@ -10,10 +9,10 @@ class WeatherAPIBase(ABC):
 
     @classmethod
     @abstractmethod
-    def _get_daily_data(cls, data: dict) -> dict[str, dict]:
+    def _get_daily_data(cls, data: dict) -> dict:
         pass
 
     @classmethod
     @abstractmethod
-    def _get_hourly_data(cls, data: dict) -> dict[str, dict]:
+    def _get_hourly_data(cls, data: dict) -> dict:
         pass

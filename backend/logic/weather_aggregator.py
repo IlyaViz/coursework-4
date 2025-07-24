@@ -98,7 +98,7 @@ class WeatherAggregator:
         return result
 
     @staticmethod
-    def _check_dicts_have_time_key(dicts: list[dict], key: str) -> bool:
+    def _check_dicts_have_time_key(dicts: list, key: str) -> bool:
         for d in dicts:
             if key not in d:
                 return False

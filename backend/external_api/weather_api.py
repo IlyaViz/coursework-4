@@ -51,7 +51,7 @@ class WeatherAPI(WeatherAPIBase):
             return {}
 
     @classmethod
-    def _get_daily_data(cls, data: dict) -> dict[str, dict]:
+    def _get_daily_data(cls, data: dict) -> dict:
         result = {}
 
         for day in data["forecast"]["forecastday"]:
@@ -68,7 +68,7 @@ class WeatherAPI(WeatherAPIBase):
         return result
 
     @classmethod
-    def _get_hourly_data(cls, data: dict) -> dict[str, dict]:
+    def _get_hourly_data(cls, data: dict) -> dict:
         result = {}
 
         for day in data["forecast"]["forecastday"]:
