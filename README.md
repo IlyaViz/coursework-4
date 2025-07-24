@@ -10,12 +10,12 @@
 
 * Access frontend on localhost:5173 and backend on localhost:8000
 
-# Example for Node.js
+# Production Environment
 
-* Create domain and map it to server ip address
+* Create domain and map it to server's ip address
 
 * Create .env in ./ with variable DOMAIN set
   
 * Run run_prod.sh
 
-* Access frontend on domain and backend on domain/backend
+* Access frontend on domain/ and backend on domain/backend/
