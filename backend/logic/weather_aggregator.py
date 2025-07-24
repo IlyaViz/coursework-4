@@ -24,6 +24,9 @@ class WeatherAggregator:
             if result:
                 results[API_class.__name__] = result
 
+        if not results:
+            raise HTTPException(404, "No data found for the provided region")
+
         aggregated_result = cls._aggregate_weather(results)
 
         return aggregated_result
