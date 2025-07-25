@@ -1,6 +1,10 @@
 import redis.asyncio as aioredis
 import time
+import logging
 from ..constants.redis_cache import REDIS_TIMEOUT, REDIS_RECONNECTION_ATEMPT_TIMEOUT
+
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncRedis:
@@ -28,16 +32,16 @@ class AsyncRedis:
                 await cls._redis.ping()
 
                 cls._connection_is_active = True
-            except Exception as e:
-                print(f"Redis connection error: {e}")
+            except aioredis.ConnectionError as e:
+                logger.error(f"Connection error: {e}")
 
     @classmethod
     async def safe_set(cls, key: str, value: str, ex: int) -> None:
         if cls._connection_is_active:
             try:
                 await cls._redis.set(key, value, ex=ex)
-            except Exception as e:
-                print(f"Error setting key in Redis: {e}")
+            except aioredis.ConnectionError as e:
+                logger.error(f"Failed to set: {e}")
 
                 await cls._try_reconnect()
         else:
@@ -48,8 +52,8 @@ class AsyncRedis:
         if cls._connection_is_active:
             try:
                 return await cls._redis.get(key)
-            except Exception as e:
-                print(f"Error getting key from Redis: {e}")
+            except aioredis.ConnectionError as e:
+                logger.error(f"Failed to get: {e}")
 
                 await cls._try_reconnect()
         else:

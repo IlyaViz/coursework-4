@@ -1,38 +1,58 @@
+import logging
+from typing import Any
 from fastapi import HTTPException
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from ..enums.day_result_key_enum import DayResultKeyEnum as drke
 from ..enums.result_type_key_enum import ResultTypeKeyEnum as rtke
 from ..external_api.weather_api_base import WeatherAPIBase
 from ..external_api.region_helper import RegionHelper
+from ..exceptions.external_api_exceptions import APIResponseException
+from ..types.general_weather_api_types import ForecastData
+from ..types.weather_aggregator_types import AggregatedData
+
+
+logger = logging.getLogger(__name__)
 
 
 class WeatherAggregator:
     @classmethod
     async def get_aggregated_weather(
         cls, region: str, API_classes: list[WeatherAPIBase]
-    ) -> dict | None:
-        coordinates = await RegionHelper.convert_to_coordinates(region)
+    ) -> AggregatedData:
+        try:
+            coordinates = await RegionHelper.convert_to_coordinates(region)
+        except APIResponseException as e:
+            logger.error(f"Weather aggregation failed for region '{region}': {e}")
 
-        if coordinates is None:
-            raise HTTPException(404, "Region doesn't exist")
+            raise
 
         results = {}
 
         for API_class in API_classes:
-            result = await API_class.get_weather(coordinates)
+            try:
+                result = await API_class.get_weather(coordinates)
 
-            if result:
                 results[API_class.__name__] = result
+            except APIResponseException as e:
+                logger.error(
+                    f"Failed to fetch weather data from {API_class.__name__} for region '{region}': {e}"
+                )
+
+                continue
 
         if not results:
-            raise HTTPException(404, "No data found for the provided region")
+            logger.error(f"No valid weather data available for region '{region}'")
+
+            raise APIResponseException(
+                f"No valid weather data available for region '{region}'"
+            )
 
         aggregated_result = cls._aggregate_weather(results)
 
         return aggregated_result
 
     @classmethod
-    def _aggregate_weather(cls, data: dict) -> dict:
+    def _aggregate_weather(cls, data: dict[str, ForecastData]) -> AggregatedData:
         result = {}
 
         template_API_result = data[list(data.keys())[0]]
@@ -101,7 +121,7 @@ class WeatherAggregator:
         return result
 
     @staticmethod
-    def _check_dicts_have_time_key(dicts: list, key: str) -> bool:
+    def _check_dicts_have_time_key(dicts: list[dict[Any, Any]], key: str) -> bool:
         for d in dicts:
             if key not in d:
                 return False

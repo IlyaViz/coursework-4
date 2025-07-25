@@ -1,5 +1,7 @@
 import os
 import json
+import httpx
+import logging
 from datetime import datetime
 from ..enums.hour_result_key_enum import HourResultKeyEnum as hrke
 from ..enums.day_result_key_enum import DayResultKeyEnum as drke
@@ -8,14 +10,19 @@ from .weather_api_base import WeatherAPIBase
 from ..resources.async_client import async_client
 from ..resources.async_redis import AsyncRedis
 from ..constants.redis_cache import WEATHER_API_CACHE_TIME
+from ..exceptions.external_api_exceptions import APIResponseException
+from ..types.general_weather_api_types import DailyData, HourlyData, ForecastData
+from ..types.open_weather_map_api_types import UsedData
 
+
+logger = logging.getLogger(__name__)
 
 API_KEY = os.environ.get("OPEN_WEATHER_MAP_API_KEY")
 
 
 class OpenWeatherMapAPI(WeatherAPIBase):
     @classmethod
-    async def get_weather(cls, coordinates: tuple[float, float]) -> dict:
+    async def get_weather(cls, coordinates: tuple[float, float]) -> ForecastData:
         cached_data = await AsyncRedis.safe_get(
             f"cache:open_weather_map_api:get_weather:{coordinates}"
         )
@@ -30,9 +37,20 @@ class OpenWeatherMapAPI(WeatherAPIBase):
             response = await async_client.get(url)
 
             if response.status_code != 200:
-                return {}
+                logger.error(
+                    f"Failed to fetch weather data for coordinates {coordinates}"
+                )
+
+                raise APIResponseException(
+                    f"Failed to fetch weather data for coordinates {coordinates}"
+                )
 
             data = response.json()
+            data = {
+                "daily": data["daily"],
+                "hourly": data["hourly"],
+                "timezone_offset": data["timezone_offset"],
+            }
 
             result = {}
 
@@ -46,13 +64,19 @@ class OpenWeatherMapAPI(WeatherAPIBase):
             )
 
             return result
-        except Exception as e:
-            print(f"Error fetching weather data from OpenWeatherMap: {e}")
+        except APIResponseException as e:
+            raise
+        except httpx.ConnectError as e:
+            logger.error(f"Connection error: {e}")
 
-            return {}
+            raise APIResponseException(f"Connection error: {e}")
+        except httpx.TimeoutException as e:
+            logger.error(f"Timeout error: {e}")
+
+            raise APIResponseException(f"Timeout error: {e}")
 
     @classmethod
-    def _get_daily_data(cls, data: dict) -> dict:
+    def _get_daily_data(cls, data: UsedData) -> DailyData:
         result = {}
 
         for day in data["daily"]:
@@ -70,7 +94,7 @@ class OpenWeatherMapAPI(WeatherAPIBase):
         return result
 
     @classmethod
-    def _get_hourly_data(cls, data: dict) -> dict:
+    def _get_hourly_data(cls, data: UsedData) -> HourlyData:
         result = {}
 
         for hour in data["hourly"]:
