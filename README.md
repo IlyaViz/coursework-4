@@ -43,7 +43,7 @@
 
 ## Production Deployment
 
-1. Set domain in `.env`:
+1. Create `.env` in `./` with API keys:
    ```env
    DOMAIN=yourdomain.com
    ```
