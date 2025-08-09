@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
-from ..types.general_weather_api_types import ForecastData
+from ..types.general_weather_api_types import ForecastData, DailyData, HourlyData
 
 
 class WeatherAPIBase(ABC):
@@ -11,10 +11,10 @@ class WeatherAPIBase(ABC):
 
     @classmethod
     @abstractmethod
-    def _get_daily_data(cls, data: Any) -> ForecastData:
+    def _get_daily_data(cls, data: Any) -> DailyData:
         pass
 
     @classmethod
     @abstractmethod
-    def _get_hourly_data(cls, data: Any) -> ForecastData:
+    def _get_hourly_data(cls, data: Any) -> HourlyData:
         pass

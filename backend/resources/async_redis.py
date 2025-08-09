@@ -1,7 +1,7 @@
 import redis.asyncio as aioredis
 import time
 import logging
-from ..constants.redis_cache import REDIS_TIMEOUT, REDIS_RECONNECTION_ATEMPT_TIMEOUT
+from ..constants.redis_cache import REDIS_TIMEOUT, REDIS_RECONNECTION_ATTEMPT_TIMEOUT
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class AsyncRedis:
 
         if (
             time.time() - cls._last_connection_attempt
-            > REDIS_RECONNECTION_ATEMPT_TIMEOUT
+            > REDIS_RECONNECTION_ATTEMPT_TIMEOUT
         ):
             cls._last_connection_attempt = time.time()
 
