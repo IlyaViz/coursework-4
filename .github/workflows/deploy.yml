@@ -1,0 +1,50 @@
+name: Deploy to Production
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Connect to Server and Deploy
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          sudo apt update
+          sudo apt upgrade -y
+
+          sudo apt install -y ca-certificates curl gnupg lsb-release
+
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+          echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+          https://download.docker.com/linux/ubuntu \
+          $(lsb_release -cs) stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+          sudo apt update
+          sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+          git clone https://github.com/${{ github.repository }}
+          cd ${{ github.event.repository.name }}
+          git pull
+
+          touch .env
+          echo "DOMAIN=${{ secrets.DOMAIN }}" > .env
+          echo "OPEN_WEATHER_MAP_API_KEY=${{ secrets.OPEN_WEATHER_MAP_API_KEY }}" >> .env
+          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> .env
+          echo "GEOCODE_API_KEY=${{ secrets.GEOCODE_API_KEY }}" >> .env
+
+          chmod +x ./run_prod.sh
+
+          sudo docker compose -f docker-compose.prod.yml down
+          sudo ./run_prod.sh

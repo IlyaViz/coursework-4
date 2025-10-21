@@ -15,7 +15,7 @@
 - City search with autocomplete
 - Auto geolocation discovery
 - Redis caching for performance
-- Production deployment with SSL and Docker containerization
+- CI/CD Production deployment with SSL and Docker containerization
 
 ## Development Setup
 
