@@ -25,7 +25,7 @@
    cd coursework-4
    ```
 
-2. Create `.env` in `/backend` with API keys:
+2. Create `.env` in `./` with API keys:
    ```env
    OPEN_WEATHER_MAP_API_KEY=your_key
    WEATHER_API_KEY=your_key
@@ -45,6 +45,9 @@
 
 1. Create `.env` in `./` with API keys:
    ```env
+   OPEN_WEATHER_MAP_API_KEY=your_key
+   WEATHER_API_KEY=your_key
+   GEOCODE_API_KEY=your_key
    DOMAIN=yourdomain.com
    ```
 

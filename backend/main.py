@@ -3,11 +3,7 @@ from fastapi import FastAPI
 from fastapi import Query
 from fastapi import HTTPException
 from typing import List
-from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-
-load_dotenv()
-
 from .external_api.weather_api import WeatherAPI
 from .external_api.open_weather_map_api import OpenWeatherMapAPI
 from .external_api.open_meteo_api import OpenMeteoAPI
