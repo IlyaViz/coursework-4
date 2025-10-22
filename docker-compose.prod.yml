@@ -5,9 +5,11 @@ services:
       dockerfile: Dockerfile.prod
     env_file:
       - ./.env
+    restart: always
 
   redis:
     image: redis:8.0-alpine
+    restart: always
 
   nginx:
     build:
@@ -20,6 +22,7 @@ services:
       - certbot:/etc/letsencrypt/
     ports:
       - "443:443"
+    restart: on-failure:3
 
   certbot:
     image: certbot/certbot
