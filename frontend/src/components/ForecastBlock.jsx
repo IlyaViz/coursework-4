@@ -23,8 +23,9 @@ const ForecastBlock = ({ forecast, onClickBaseLink }) => {
                     : data["condition icon"]
                 ).map(([service, icon]) => (
                   <img
-                    src={icon}
                     key={service}
+                    src={icon}
+                    alt={service}
                     style={{ backgroundColor: generateServiceColor(service) }}
                     className="m-1 rounded-2xl"
                   />
