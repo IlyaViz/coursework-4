@@ -20,12 +20,14 @@
 ## Development Setup
 
 1. Clone repository:
+
    ```bash
    git clone https://github.com/IlyaViz/coursework-4
    cd coursework-4
    ```
 
 2. Create `.env` in `./` with API keys:
+
    ```env
    OPEN_WEATHER_MAP_API_KEY=your_key
    WEATHER_API_KEY=your_key
@@ -33,6 +35,7 @@
    ```
 
 3. Start development environment:
+
    ```bash
    docker-compose -f docker-compose.dev.yml up --build
    ```
@@ -44,6 +47,7 @@
 ## Production Deployment
 
 1. Create `.env` in `./` with API keys:
+
    ```env
    OPEN_WEATHER_MAP_API_KEY=your_key
    WEATHER_API_KEY=your_key
@@ -52,8 +56,15 @@
    ```
 
 2. Deploy:
+
    ```bash
    ./run_prod.sh
    ```
 
 3. Access: https://yourdomain.com
+
+## Screenshots
+
+| Main Forecast Page                          | Dynamics Page                              |
+| ------------------------------------------- | ------------------------------------------ |
+| ![Main Forecast Page](docs/main_screen.png) | ![Dynamics Page](docs/dynamics_screen.png) |
